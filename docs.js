@@ -133,5 +133,23 @@ const cwmDocs = {
             {name: "--saved", desc: "Target saved commands."},
             {name: "--hist", desc: "Target history cache."}
         ]
-    }
+    },
+    "git": {
+        title: "Git Account Manager",
+        syntax: "cwm git [add|list|setup]",
+        summary: "A complete solution for managing multiple GitHub accounts (e.g., Personal vs Work) on a single machine without SSH conflicts.",
+        logic: `
+            <p>This tool solves the 'Wrong SSH Key' problem by managing your <code>~/.ssh/config</code> file.</p>
+            <ul>
+                <li><strong>add:</strong> Generates a secure <strong>ED25519</strong> SSH key and creates a Host Alias in your config (e.g., <code>Host github.com-work</code>).</li>
+                <li><strong>setup:</strong> Configures the current folder to use a specific identity. It sets the local <code>user.name</code> and <code>user.email</code>, and <strong>rewrites the remote URL</strong> from <code>git@github.com...</code> to <code>git@github.com-alias...</code>.</li>
+                <li>This ensures Git always uses the correct key for push/pull operations in this specific folder.</li>
+            </ul>
+        `,
+        flags: [
+            { name: "add", desc: "Wizard: Generates SSH key, adds to config, and copies public key to clipboard." },
+            { name: "list", desc: "Displays all CWM-managed accounts and their key paths." },
+            { name: "setup", desc: "Interactive: Links current folder to an account, initializes repo, and fixes Remote URL." }
+        ]
+    },
 };

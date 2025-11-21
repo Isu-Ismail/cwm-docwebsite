@@ -23,36 +23,43 @@ const cwmData = {
             id: "core",
             title: "Initialization & Core",
             commands: [
-                { id: "hello", name: "cwm hello", desc: "Displays welcome message, version, and system info." },
-                { id: "init", name: "cwm init", desc: "Initializes a new Local Bank (.cwm folder)." },
-                { id: "setup", name: "cwm setup", desc: "Configures shell for instant history sync." },
-                { id: "config", name: "cwm config", desc: "Manage configuration and history sources." }
+                { id: "hello", name: "cwm hello", desc: "Displays welcome message, version, and system info.",example: "$ cwm hello" },
+                { id: "init", name: "cwm init", desc: "Initializes a new Local Bank (.cwm folder)." ,example: "$ cwm init" },
+                { id: "setup", name: "cwm setup", desc: "Configures shell for instant history sync.",example: "$ cwm setup\n$ cwm setup --force" },
+                { id: "config", name: "cwm config", desc: "Manage configuration and history sources.",example: "$ cwm config --shell\n$ cwm config --stop-warning"  }
             ]
         },
         {
             id: "saving",
             title: "Saving & Managing",
             commands: [
-                { id: "save", name: "cwm save", desc: "Handles saving variables, raw commands, and archives." },
-                { id: "bank", name: "cwm bank", desc: "Manage the storage banks (Local vs Global)." },
-                { id: "clear", name: "cwm clear", desc: "Clean up saved commands or history." },
-                { id: "backup", name: "cwm backup", desc: "Manage backups of your saved commands." }
+                { id: "save", name: "cwm save", desc: "Handles saving variables, raw commands, and archives.",example: "$ cwm save my-var='cwm hello' \n$ cwm save -b my-var \n$ cwm save --arch"  },
+                { id: "bank", name: "cwm bank", desc: "Manage the storage banks (Local vs Global)." ,example: "$ cwm bank info\n$ cwm bank delete --global | --local" },
+                { id: "clear", name: "cwm clear", desc: "Clean up saved commands or history." ,example: "$ cwm clear --saved -f 'cwm' \n$ cwm clear --hist --all" },
+                { id: "backup", name: "cwm backup", desc: "Manage backups of your saved commands.",example: "$ cwm backup list\n$ cwm backup merge -l | -cl " }
             ]
         },
         {
             id: "retrieving",
             title: "Retrieving Data",
             commands: [
-                { id: "get", name: "cwm get", desc: "Get commands from Bank, History, or Archives." }
+                { id: "get", name: "cwm get", desc: "Get commands from Bank, History, or Archives.",example: "$ cwm get my-var\n$ cwm get --hist -f 'pip' -n 10\n$ cwm get --cached [filters]" }
             ]
         },
         {
             id: "utils",
             title: "Utilities",
             commands: [
-                { id: "watch", name: "cwm watch", desc: "Session management to track specific workflows." },
-                { id: "copy", name: "cwm copy", desc: "Context Packer for LLMs (File Tree & Content)." }
+                { id: "watch", name: "cwm watch", desc: "Session management to track specific workflows." ,example: "$ cwm watch start \n$ cwm watch stop --save"},
+                { id: "copy", name: "cwm copy", desc: "Context Packer for LLMs (File Tree & Content).",example: "$ cwm copy\n$ cwm copy --tree" },
+                {
+                    id: "git", 
+                    name: "cwm git", 
+                    desc: "Manage multiple GitHub accounts (SSH keys) and auto-configure local repos.",
+                    example: "$ cwm git add\n$ cwm git setup" 
+                }
             ]
         }
+        
     ]
 };
