@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CWM Documentation</title>
+    <link rel="stylesheet" href="style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap"
+        rel="stylesheet">
+
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo"><a href="index.html" style="text-decoration:none; color:inherit;">CWM <span
+                    class="badge">DOCS</span></a></div>
+        <div class="nav-controls">
+            <a href="index.html" class="back-link">← Back to Cheat Sheet</a>
+            <button id="themeToggle" class="theme-btn">☀/☾</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <aside class="sidebar" id="doc-sidebar">
+        </aside>
+
+        <main class="content doc-content">
+
+            <div id="doc-render-area">
+            </div>
+
+            <div class="discussion-area">
+                <h3>Discussions & Questions</h3>
+                <p class="subtext">Stuck on this command? Ask the community.</p>
+
+                <div class="giscus"></div>
+            </div>
+
+            <footer>
+                <p>Documentation generated for CWM. Developed by Vibe Coder.</p>
+            </footer>
+        </main>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="docs.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
