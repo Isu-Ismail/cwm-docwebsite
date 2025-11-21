@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Theme is already set in Head, just bind the button
+    // Theme is already set in Head, just bind the button logic
     bindThemeButton();
 
-    // Check which page we are on
+    // Check which page we are on by looking for unique elements
     if (document.getElementById('intro-section')) {
         // === HOME PAGE LOGIC ===
         loadProjectInfo();
@@ -13,9 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // === DOCS PAGE LOGIC ===
         renderDocSidebar(); 
         loadDocContent();
+        
+        // Handle Browser Back/Forward buttons for SPA feel
+        window.addEventListener('popstate', loadDocContent);
     }
 });
 
+// --- THEME TOGGLE ---
 function bindThemeButton() {
     const btn = document.getElementById('themeToggle');
     if(btn) {
@@ -37,7 +41,7 @@ function loadProjectInfo() {
     document.getElementById('project-desc').textContent = cwmData.projectInfo.description;
     document.getElementById('install-cmd').textContent = cwmData.projectInfo.installCommand;
 
-    // Render Original Style Alerts (Colored Borders)
+    // Render Alerts
     const alertContainer = document.getElementById('alert-container');
     if(alertContainer) {
         alertContainer.innerHTML = '';
@@ -60,7 +64,7 @@ function renderSidebar() {
         sidebar.appendChild(h3);
         cat.commands.forEach(cmd => {
             const a = document.createElement('a');
-            a.href = `docs.html?cmd=${cmd.id}`; // Links to Docs Page
+            a.href = `docs.html?cmd=${cmd.id}`; // Standard link to docs page
             a.className = 'nav-link';
             a.textContent = cmd.name;
             sidebar.appendChild(a);
@@ -92,7 +96,8 @@ function renderContent() {
                 </div>
                 <p class="cmd-desc">${cmd.desc}</p>
             `;
-            // Show example if it exists (nice touch for cards)
+            
+            // Show example code block in card if available
             if (cmd.example) {
                 html += `<pre style="margin-top:1rem; font-size:0.8rem;">${cmd.example}</pre>`;
             }
@@ -112,8 +117,17 @@ function setupSearch() {
         const cards = document.querySelectorAll('.cmd-card');
         cards.forEach(card => {
             const text = card.innerText.toLowerCase();
+            // Toggle visibility based on search match
             card.style.display = text.includes(term) ? 'block' : 'none';
         });
+    });
+    
+    // Add 'slash' shortcut to focus search
+    document.addEventListener('keydown', (e) => {
+        if (e.key === '/' && document.activeElement !== searchInput) {
+            e.preventDefault();
+            searchInput.focus();
+        }
     });
 }
 
@@ -131,9 +145,26 @@ function renderDocSidebar() {
         sidebar.appendChild(h3);
         cat.commands.forEach(cmd => {
             const a = document.createElement('a');
-            a.href = `docs.html?cmd=${cmd.id}`;
+            const cmdUrl = `docs.html?cmd=${cmd.id}`;
+            a.href = cmdUrl;
+            // Highlight active link
             a.className = `nav-link ${currentCmd === cmd.id ? 'active' : ''}`;
             a.textContent = cmd.name;
+            
+            // SPA LINK HANDLING: Prevent full page reload
+            a.onclick = (e) => {
+                e.preventDefault();
+                // Update URL in browser address bar without reloading
+                window.history.pushState({path: cmdUrl}, '', cmdUrl);
+                
+                // Update active state in sidebar UI
+                document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+                e.target.classList.add('active');
+
+                // Load content manually
+                loadDocContent();
+            };
+
             sidebar.appendChild(a);
         });
     });
@@ -145,6 +176,11 @@ function loadDocContent() {
     const urlParams = new URLSearchParams(window.location.search);
     const cmdId = urlParams.get('cmd');
     
+    // ANIMATION RESET: Remove class, trigger reflow, add back to restart animation
+    container.classList.remove('fade-in');
+    void container.offsetWidth; // force reflow magic
+    container.classList.add('fade-in');
+
     const details = cwmDocs[cmdId];
 
     if (!details) {
@@ -195,12 +231,16 @@ function loadDocContent() {
     `;
 }
 
-// DOCS COPY FUNCTION (Icon Button)
+// --- UTILITIES & COPY FUNCTIONS ---
+
+// 1. DOCS COPY FUNCTION (Icon Button)
 function copyDocSyntax(text, btnElement) {
     navigator.clipboard.writeText(text).then(() => {
         const statusSpan = btnElement.nextElementSibling;
         statusSpan.textContent = "Copied!";
         statusSpan.classList.add('visible');
+        
+        // Hide message after 2 seconds
         setTimeout(() => {
             statusSpan.classList.remove('visible');
             setTimeout(() => { statusSpan.textContent = ""; }, 300); 
@@ -208,14 +248,17 @@ function copyDocSyntax(text, btnElement) {
     }).catch(err => console.error('Failed to copy:', err));
 }
 
-// HOME PAGE COPY FUNCTION (Text Button)
+// 2. HOME PAGE COPY FUNCTION (Text Button)
 function copyInstall(btn) {
     const text = document.getElementById('install-cmd').textContent;
     navigator.clipboard.writeText(text).then(() => {
         const originalText = btn.textContent;
+        
+        // Visual feedback
         btn.textContent = "Copied!";
         btn.style.backgroundColor = "#27c93f"; // Optional green flash
         
+        // Revert after 2 seconds
         setTimeout(() => {
             btn.textContent = originalText;
             btn.style.backgroundColor = ""; // Revert color

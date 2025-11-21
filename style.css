@@ -347,14 +347,36 @@ pre {
     padding-left: 10px;
 }
 
-.logic-content { color: var(--text-secondary); line-height: 1.7; font-size: 1rem; }
+.logic-content {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-size: 1rem;
+}
 .logic-content ul, .logic-content ol { margin-left: 1.5rem; margin-top: 0.5rem; }
 .logic-content li { margin-bottom: 0.5rem; }
 .logic-content code { 
-    background: var(--code-bg); padding: 2px 6px; border-radius: 4px; 
-    font-family: 'JetBrains Mono', monospace; color: var(--accent); font-size: 0.9rem;
+    background: var(--code-bg); 
+    padding: 2px 6px; 
+    border-radius: 4px; 
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-size: 0.9rem;
 }
 
-.discussion-area { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border); }
+.discussion-area {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+}
 .discussion-area h3 { color: var(--text-primary); margin-bottom: 0.5rem; }
 .subtext { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 2rem; }
+
+/* --- FADE ANIMATION --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 2s ease-out forwards;
+}
