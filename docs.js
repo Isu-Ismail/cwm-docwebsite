@@ -1,4 +1,63 @@
 const cwmDocs = {
+    "jump": {
+        title: "Jump (Project Teleporter)",
+        syntax: "cwm jump [name|id] [flags]",
+        summary: "Instantly open your projects in VS Code, Terminal, or Jupyter without navigating folders.",
+        logic: `
+            <p>The <code>jump</code> command uses a <strong>Detached Process</strong> model. Unlike aliases that change your current directory, CWM spawns a new independent window for your project.</p>
+            <p><strong>How it works:</strong></p>
+            <ul>
+                <li><strong>Smart Launch:</strong> If the target app is a console tool (like <code>jupyter</code> or <code>cmd</code>), CWM opens a new console window that <em>inherits</em> your current Virtual Environment (venv). If it's a GUI tool (like VS Code), it launches silently in the background.</li>
+                <li><strong>Fuzzy Matching:</strong> You don't need the exact name. If you have a project <code>my-awesome-api</code>, typing <code>cwm jump api</code> will likely find it.</li>
+                <li><strong>Usage Ranking:</strong> CWM tracks "Hits". Frequently accessed projects bubble to the top of the list automatically.</li>
+            </ul>
+        `,
+        flags: [
+            { name: "<name>", desc: "The project Alias or ID. Can be comma-separated (e.g., <code>1,2</code>)." },
+            { name: "-t, --terminal", desc: "Also open a new detached terminal window at the project location." },
+            { name: "-n <count>", desc: "Limit the list view. Use <code>-n all</code> to see everything." }
+        ]
+    },
+    "project": {
+        title: "Project Manager",
+        syntax: "cwm project [scan|add|remove|list]",
+        summary: "Auto-detects codebases on your machine and manages the Jump database.",
+        logic: `
+            <p><strong>The Smart Scan Engine:</strong></p>
+            <p>Instead of blindly scanning every file (which takes forever), CWM uses a targeted approach:</p>
+            <ol>
+                <li>It scans your <strong>User Home</strong> directory recursively.</li>
+                <li>It ignores heavy system folders defined in <code>.cwmignore</code> (e.g., <code>node_modules</code>, <code>AppData</code>, <code>Downloads</code>).</li>
+                <li>It looks for <strong>Markers</strong> defined in your config (default: <code>.git</code>, <code>.cwm</code>).</li>
+                <li>Once a marker is found, it flags that folder as a Project and <strong>stops scanning deeper</strong> into that tree to prevent nested duplication.</li>
+            </ol>
+        `,
+        flags: [
+            { name: "scan", desc: "Runs the Smart Scan. Features a visual progress bar and interactive prompts." },
+            { name: "add <path>", desc: "Manually add a folder. Prompts for alias if not provided." },
+            { name: "remove", desc: "Interactive cleanup mode. Shows least-used projects first." }
+        ]
+    },
+    "config": {
+        title: "Configuration",
+        syntax: "cwm config [flags]",
+        summary: "Manage global settings, editors, and detection rules.",
+        logic: `
+            <p>Stores settings in <code>config.json</code> inside the Global Bank. CWM automatically migrates older configs to the newest version.</p>
+            <p><strong>Editor Configuration:</strong></p>
+            <p>You can change what <code>cwm jump</code> opens. Defaults to <code>code</code> (VS Code).</p>
+            <ul>
+                <li><strong>Jupyter:</strong> <code>cwm config --editor "jupyter notebook"</code></li>
+                <li><strong>PowerShell:</strong> <code>cwm config --editor "start powershell"</code></li>
+            </ul>
+        `,
+        flags: [
+            { name: "--editor <cmd>", desc: "Set default editor command (e.g., 'code', 'notepad', 'jupyter notebook')." },
+            { name: "--add-marker <file>", desc: "Add a file to detect projects (e.g., 'go.mod', 'cargo.toml')." },
+            { name: "--shell", desc: "Select history file manually from detected candidates." },
+            { name: "--global", desc: "Target global config specifically." }
+        ]
+    },
     "save": {
         title: "Save Command",
         syntax: "cwm save [flags] [payload]",
@@ -42,10 +101,11 @@ const cwmDocs = {
         syntax: "cwm copy [flags] [ids]",
         summary: "Scans your project and packs code for AI/LLMs.",
         logic: `
-            <p>Uses a custom <code>FileMapper</code> engine.</p>
+            <p>Uses a custom <code>FileMapper</code> engine designed for LLM context windows.</p>
             <ul>
                 <li><strong>Smart Ignore:</strong> Automatically detects project type (Python, Node, Flutter) and generates a <code>.cwmignore</code>.</li>
-                <li><strong>Condense Mode:</strong> Removes comments (<code>//</code>, <code>#</code>) and whitespace to save tokens.</li>
+                <li><strong>Condense Mode:</strong> Removes comments (<code>//</code>, <code>#</code>) and excessive whitespace to save tokens without breaking logic.</li>
+                <li><strong>Tree Mode:</strong> Generates a clean ASCII representation of your project structure.</li>
             </ul>
         `,
         flags: [
@@ -57,10 +117,10 @@ const cwmDocs = {
     "watch": {
         title: "Watch Session",
         syntax: "cwm watch [start|stop|status]",
-        summary: "Track a specific segment of work.",
+        summary: "Track a specific segment of work without background processes.",
         logic: `
-            <p>CWM Watch does not run a background process. It records the <strong>Line Number</strong> of your history file when you run <code>start</code>.</p>
-            <p>When you run <code>stop</code>, it grabs every line after that start index. This makes it lightweight and crash-proof.</p>
+            <p>CWM Watch does not run a background daemon. It simply records the <strong>Line Number</strong> of your history file when you run <code>start</code>.</p>
+            <p>When you run <code>stop</code>, it grabs every line after that start index. This makes it lightweight and completely crash-proof.</p>
         `,
         flags: [
             { name: "start", desc: "Mark current history line." },
@@ -73,7 +133,7 @@ const cwmDocs = {
         summary: "Versioning system for saved commands.",
         logic: `
             <p>Backups are created automatically on every save in <code>.cwm/data/backup/</code>.</p>
-            <p><strong>Merge Logic:</strong> Allows you to merge an old backup into current data. It detects conflicts (same variable name) and asks to Rename, Delete, or Skip.</p>
+            <p><strong>Merge Logic:</strong> Allows you to merge an old backup into current data. It detects conflicts (same variable name) and intelligently prompts to Rename, Delete, or Skip.</p>
         `,
         flags: [
             { name: "list", desc: "Show available backups." },
@@ -94,21 +154,10 @@ const cwmDocs = {
         logic: "<p>Creates <code>.cwm/</code> folder structure in current directory. Prevents creation if you are already inside a CWM bank (nested banks are not allowed).</p>",
         flags: []
     },
-    "config": {
-        title: "Configuration",
-        syntax: "cwm config [flags]",
-        summary: "Manage global or local settings.",
-        logic: "<p>Stores settings in <code>config.json</code>. You can force Global config update even when inside a Local Bank using <code>--global</code>.</p>",
-        flags: [
-            { name: "--shell", desc: "Select history file manually from detected candidates." },
-            { name: "--stop-warning", desc: "Disable large history warning." },
-            { name: "--global", desc: "Target global config specifically." }
-        ]
-    },
     "setup": {
         title: "Shell Setup",
         syntax: "cwm setup",
-        summary: "Hooks CWM into Bash/Zsh.",
+        summary: "Hooks CWM into Bash/Zsh (Linux/Mac/GitBash).",
         logic: "<p>Appends <code>history -a</code> to <code>.bashrc</code> via <code>PROMPT_COMMAND</code>. This forces the shell to write history to disk instantly, allowing CWM to see commands in real-time.</p>",
         flags: [{name: "--force", desc: "Manual shell selection (Bash/Zsh/PowerShell)."}]
     },
@@ -151,5 +200,5 @@ const cwmDocs = {
             { name: "list", desc: "Displays all CWM-managed accounts and their key paths." },
             { name: "setup", desc: "Interactive: Links current folder to an account, initializes repo, and fixes Remote URL." }
         ]
-    },
+    }
 };

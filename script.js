@@ -1,11 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Theme is already set in Head, just bind the button logic
     bindThemeButton();
+    setupMobileMenu();
+    setupMobileSearch(); // Init mobile search logic
 
-    // Check which page we are on by looking for unique elements
+    // Initialize based on page
     if (document.getElementById('intro-section')) {
         // === HOME PAGE LOGIC ===
         loadProjectInfo();
+        renderVersions(); // Render version buttons
         renderSidebar();
         renderContent();
         setupSearch();
@@ -13,13 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // === DOCS PAGE LOGIC ===
         renderDocSidebar(); 
         loadDocContent();
-        
-        // Handle Browser Back/Forward buttons for SPA feel
         window.addEventListener('popstate', loadDocContent);
     }
 });
 
-// --- THEME TOGGLE ---
 function bindThemeButton() {
     const btn = document.getElementById('themeToggle');
     if(btn) {
@@ -32,6 +31,76 @@ function bindThemeButton() {
     }
 }
 
+// --- MOBILE MENU LOGIC ---
+function setupMobileMenu() {
+    const menuBtn = document.getElementById('mobileMenuBtn');
+    const sidebar = document.getElementById('sidebar') || document.getElementById('doc-sidebar');
+    const overlay = document.getElementById('mobileOverlay');
+
+    if (menuBtn && sidebar && overlay) {
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.add('open');
+            overlay.classList.add('active');
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        });
+    }
+}
+
+// --- MOBILE SEARCH TOGGLE (Updated: Auto Clear) ---
+function setupMobileSearch() {
+    const mobileSearchBtn = document.getElementById('mobileSearchBtn');
+    const searchCloseBtn = document.getElementById('searchCloseBtn');
+    const navbar = document.getElementById('mainNavbar');
+    const searchInput = document.getElementById('searchInput');
+
+    // Helper function to close search and reset list
+    const closeAndClear = () => {
+        if (navbar) navbar.classList.remove('search-active');
+        if (searchInput) {
+            searchInput.value = ''; // Clear text
+            // Trigger the search logic to reset the list to full view
+            searchInput.dispatchEvent(new Event('keyup')); 
+        }
+    };
+
+    // Open Search
+    if(mobileSearchBtn && navbar) {
+        mobileSearchBtn.addEventListener('click', () => {
+            navbar.classList.add('search-active');
+            setTimeout(() => { if(searchInput) searchInput.focus(); }, 100);
+        });
+    }
+
+    // Close Search (X button)
+    if(searchCloseBtn) {
+        searchCloseBtn.addEventListener('click', closeAndClear);
+    }
+
+    // Close if clicking content area
+    const contentArea = document.querySelector('.content');
+    if(contentArea) {
+        contentArea.addEventListener('click', () => {
+            if(navbar && navbar.classList.contains('search-active')) {
+                closeAndClear();
+            }
+        });
+    }
+}
+
+function closeMobileMenu() {
+    if (window.innerWidth > 768) return;
+    const sidebar = document.getElementById('sidebar') || document.getElementById('doc-sidebar');
+    const overlay = document.getElementById('mobileOverlay');
+    if(sidebar && overlay) {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+    }
+}
+
 // --- HOME PAGE FUNCTIONS ---
 
 function loadProjectInfo() {
@@ -41,7 +110,6 @@ function loadProjectInfo() {
     document.getElementById('project-desc').textContent = cwmData.projectInfo.description;
     document.getElementById('install-cmd').textContent = cwmData.projectInfo.installCommand;
 
-    // Render Alerts
     const alertContainer = document.getElementById('alert-container');
     if(alertContainer) {
         alertContainer.innerHTML = '';
@@ -54,6 +122,49 @@ function loadProjectInfo() {
     }
 }
 
+// --- VERSION LOGIC ---
+function renderVersions() {
+    if(typeof cwmData === 'undefined') return;
+    const wrapper = document.getElementById('version-wrapper');
+    if(!wrapper) return;
+
+    const currentVer = cwmData.projectInfo.version;
+    const pkgName = cwmData.projectInfo.package || "cwm-cli";
+    const versions = [currentVer, ...(cwmData.projectInfo.old_versions || [])];
+
+    wrapper.innerHTML = '<span class="ver-label">Versions:</span>';
+
+    versions.forEach((v, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'ver-btn';
+        
+        if (index === 0) {
+            btn.classList.add('active');
+            btn.textContent = `${v} (Latest)`;
+            btn.onclick = () => updateInstallCmd(pkgName, null, btn);
+        } else {
+            btn.textContent = v;
+            const cleanVer = v.startsWith('v') ? v.substring(1) : v; 
+            btn.onclick = () => updateInstallCmd(pkgName, cleanVer, btn);
+        }
+        
+        wrapper.appendChild(btn);
+    });
+}
+
+function updateInstallCmd(pkg, ver, btnElement) {
+    const cmdSpan = document.getElementById('install-cmd');
+    
+    if (ver) {
+        cmdSpan.textContent = `pip install ${pkg}==${ver}`;
+    } else {
+        cmdSpan.textContent = `pip install ${pkg}`;
+    }
+
+    document.querySelectorAll('.ver-btn').forEach(b => b.classList.remove('active'));
+    btnElement.classList.add('active');
+}
+
 function renderSidebar() {
     if(typeof cwmData === 'undefined') return;
     const sidebar = document.getElementById('sidebar');
@@ -64,7 +175,7 @@ function renderSidebar() {
         sidebar.appendChild(h3);
         cat.commands.forEach(cmd => {
             const a = document.createElement('a');
-            a.href = `docs.html?cmd=${cmd.id}`; // Standard link to docs page
+            a.href = `docs.html?cmd=${cmd.id}`; 
             a.className = 'nav-link';
             a.textContent = cmd.name;
             sidebar.appendChild(a);
@@ -85,7 +196,6 @@ function renderContent() {
         cat.commands.forEach(cmd => {
             const card = document.createElement('div');
             card.className = 'cmd-card';
-            // Link entire card to Docs
             card.onclick = () => { window.location.href = `docs.html?cmd=${cmd.id}`; };
             card.style.cursor = "pointer";
 
@@ -96,8 +206,6 @@ function renderContent() {
                 </div>
                 <p class="cmd-desc">${cmd.desc}</p>
             `;
-            
-            // Show example code block in card if available
             if (cmd.example) {
                 html += `<pre style="margin-top:1rem; font-size:0.8rem;">${cmd.example}</pre>`;
             }
@@ -108,21 +216,74 @@ function renderContent() {
     });
 }
 
+// --- SEARCH WITH FIXED SCROLLING ---
 function setupSearch() {
     const searchInput = document.getElementById('searchInput');
     if(!searchInput) return;
     
+    let scrollTimeout = null;
+
     searchInput.addEventListener('keyup', (e) => {
+        clearTimeout(scrollTimeout);
+
         const term = e.target.value.toLowerCase();
         const cards = document.querySelectorAll('.cmd-card');
+        const sections = document.querySelectorAll('.section-title');
+        let firstVisible = null;
+
+        // 1. Filter Cards
         cards.forEach(card => {
             const text = card.innerText.toLowerCase();
-            // Toggle visibility based on search match
-            card.style.display = text.includes(term) ? 'block' : 'none';
+            const isMatch = text.includes(term);
+            card.style.display = isMatch ? 'block' : 'none';
+            if (isMatch && !firstVisible) firstVisible = card;
         });
+
+        // 2. Hide Empty Sections
+        sections.forEach(h2 => {
+            let next = h2.nextElementSibling;
+            let hasVisibleCards = false;
+            while(next && !next.classList.contains('section-title')) {
+                if(next.classList.contains('cmd-card') && next.style.display !== 'none') {
+                    hasVisibleCards = true;
+                    break;
+                }
+                next = next.nextElementSibling;
+            }
+            h2.style.display = hasVisibleCards ? 'block' : 'none';
+        });
+
+        // 3. Auto-Scroll Logic (FIXED)
+        scrollTimeout = setTimeout(() => {
+            const contentContainer = document.querySelector('.content');
+            
+            if (term.length > 0 && firstVisible && contentContainer) {
+                let scrollTarget = firstVisible;
+                let prev = firstVisible.previousElementSibling;
+                while(prev) {
+                    if(prev.classList.contains('section-title')) {
+                        scrollTarget = prev; 
+                        break;
+                    }
+                    prev = prev.previousElementSibling;
+                }
+
+                const rect = scrollTarget.getBoundingClientRect();
+                const containerRect = contentContainer.getBoundingClientRect();
+                const offset = rect.top - containerRect.top;
+
+                // Scroll the CONTAINER
+                contentContainer.scrollBy({
+                    top: offset - 20, // 20px buffer
+                    behavior: 'smooth'
+                });
+
+            } else if (term.length === 0 && contentContainer) {
+                contentContainer.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }, 300); 
     });
     
-    // Add 'slash' shortcut to focus search
     document.addEventListener('keydown', (e) => {
         if (e.key === '/' && document.activeElement !== searchInput) {
             e.preventDefault();
@@ -147,22 +308,16 @@ function renderDocSidebar() {
             const a = document.createElement('a');
             const cmdUrl = `docs.html?cmd=${cmd.id}`;
             a.href = cmdUrl;
-            // Highlight active link
             a.className = `nav-link ${currentCmd === cmd.id ? 'active' : ''}`;
             a.textContent = cmd.name;
             
-            // SPA LINK HANDLING: Prevent full page reload
             a.onclick = (e) => {
                 e.preventDefault();
-                // Update URL in browser address bar without reloading
                 window.history.pushState({path: cmdUrl}, '', cmdUrl);
-                
-                // Update active state in sidebar UI
                 document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
                 e.target.classList.add('active');
-
-                // Load content manually
                 loadDocContent();
+                closeMobileMenu();
             };
 
             sidebar.appendChild(a);
@@ -176,9 +331,8 @@ function loadDocContent() {
     const urlParams = new URLSearchParams(window.location.search);
     const cmdId = urlParams.get('cmd');
     
-    // ANIMATION RESET: Remove class, trigger reflow, add back to restart animation
     container.classList.remove('fade-in');
-    void container.offsetWidth; // force reflow magic
+    void container.offsetWidth; 
     container.classList.add('fade-in');
 
     const details = cwmDocs[cmdId];
@@ -231,16 +385,11 @@ function loadDocContent() {
     `;
 }
 
-// --- UTILITIES & COPY FUNCTIONS ---
-
-// 1. DOCS COPY FUNCTION (Icon Button)
 function copyDocSyntax(text, btnElement) {
     navigator.clipboard.writeText(text).then(() => {
         const statusSpan = btnElement.nextElementSibling;
         statusSpan.textContent = "Copied!";
         statusSpan.classList.add('visible');
-        
-        // Hide message after 2 seconds
         setTimeout(() => {
             statusSpan.classList.remove('visible');
             setTimeout(() => { statusSpan.textContent = ""; }, 300); 
@@ -248,22 +397,59 @@ function copyDocSyntax(text, btnElement) {
     }).catch(err => console.error('Failed to copy:', err));
 }
 
-// 2. HOME PAGE COPY FUNCTION (Text Button)
+// HOME PAGE COPY FUNCTION (Text Button)
 function copyInstall(btn) {
     const text = document.getElementById('install-cmd').textContent;
-    navigator.clipboard.writeText(text).then(() => {
-        const originalText = btn.textContent;
+
+    const onSuccess = () => {
+        const originalHTML = btn.innerHTML;
+        // Change logic: If mobile, we might want to show a checkmark icon.
+        // For simplicity and robustness, we can change color and maybe text if visible.
         
-        // Visual feedback
-        btn.textContent = "Copied!";
-        btn.style.backgroundColor = "#27c93f"; // Optional green flash
+        btn.classList.add("copied");
         
-        // Revert after 2 seconds
+        // Desktop Text Change
+        const textSpan = btn.querySelector('.btn-text');
+        if(textSpan) textSpan.textContent = "Copied!";
+        
+        // Mobile Icon Change (Optional: Make icon Green)
+        btn.style.backgroundColor = "#27c93f"; 
+        btn.style.color = "#fff";
+
         setTimeout(() => {
-            btn.textContent = originalText;
-            btn.style.backgroundColor = ""; // Revert color
+            btn.classList.remove("copied");
+            if(textSpan) textSpan.textContent = "Copy";
+            btn.style.backgroundColor = ""; 
+            btn.style.color = ""; 
         }, 2000);
-    }).catch(err => console.error('Failed to copy:', err));
+    };
+
+    // Try Modern API
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text)
+            .then(onSuccess)
+            .catch(() => fallbackCopyText(text, onSuccess));
+    } else {
+        // Fallback
+        fallbackCopyText(text, onSuccess);
+    }
+}
+
+function fallbackCopyText(text, callback) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-9999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) callback();
+    } catch (err) {
+        console.error('Fallback copy failed', err);
+    }
+    document.body.removeChild(textArea);
 }
 
 function slugify(text) {

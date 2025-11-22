@@ -20,33 +20,54 @@
 
 <body>
 
-    <nav class="navbar">
-        <div class="logo"><a href="index.html" style="text-decoration:none; color:inherit;">CWM <span
-                    class="badge">DOCS</span></a></div>
+    <nav class="navbar" id="mainNavbar">
+        <div class="nav-left">
+            <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Toggle Menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <div class="logo"><a href="index.html" style="text-decoration:none; color:inherit;">CWM <span
+                        class="badge">DOCS</span></a></div>
+        </div>
+
         <div class="nav-controls">
-            <a href="index.html" class="back-link">← Back to Cheat Sheet</a>
+            <!-- Hidden Back Link Logic handled by CSS/JS or just link -->
+            <a href="index.html" class="back-link">← <span class="back-text">Back</span></a>
+
+            <a href="https://github.com/Isu-Ismail/cwm" target="_blank" class="github-btn" aria-label="Visit GitHub">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                    </path>
+                </svg>
+            </a>
+
             <button id="themeToggle" class="theme-btn">☀/☾</button>
         </div>
     </nav>
 
     <div class="container">
-        <aside class="sidebar" id="doc-sidebar">
-        </aside>
+        <div id="mobileOverlay" class="mobile-overlay"></div>
+
+        <aside class="sidebar" id="doc-sidebar"></aside>
 
         <main class="content doc-content">
 
-            <div id="doc-render-area">
-            </div>
+            <div id="doc-render-area"></div>
 
             <div class="discussion-area">
                 <h3>Discussions & Questions</h3>
                 <p class="subtext">Stuck on this command? Ask the community.</p>
-
                 <div class="giscus"></div>
             </div>
 
             <footer>
-                <p>&copy; Documentation of cwm-cli.</p>
+                <p> &copy; Documentation of cwm-cli.</p>
             </footer>
         </main>
     </div>
