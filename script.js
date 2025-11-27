@@ -519,6 +519,6 @@ window.addEventListener('load', () => {
             setTimeout(() => {
                 loader.style.display = 'none';
             }, 500); 
-        }, 3000); // <--- Increase this to test (e.g., 3000, 5000)
+        }, 800); // <--- Increase this to test (e.g., 3000, 5000)
     }
 });
