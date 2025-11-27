@@ -2,20 +2,19 @@
     /* Global Layout Variables */
     --navbar-height: 60px;
 
-    /* PURE BLACK DEFAULT THEME (Minimalist) */
-    --bg-body: #000000;        /* True Black */
-    --bg-sidebar: #000000;     /* Seamless sidebar */
-    --bg-card: #111111;        /* Very dark grey for cards so they appear */
+   --bg-body: #0d1117;        /* Signature GitHub Dark background */
+    --bg-sidebar: #161b22;     /* Slightly lighter panel color */
+    --bg-card: #161b22;        /* Cards match the sidebar */
     
-    --text-primary: #ffffff;   /* Pure White */
-    --text-secondary: #888888; /* Neutral Grey */
+    --text-primary: #c9d1d9;   /* High visibility Light Grey (Standard GitHub text) */
+    --text-secondary: #8b949e; /* Muted grey for descriptions */
     
-    --accent: #ffffff;         /* White Accent (Monochrome style) */
-    --border: #333333;         /* Dark grey borders for structure */
+    --accent: #79c0ff;         /* "Faded Blue" for Headings/Links */
+    --border: #30363d;         /* Subtle dark borders */
     
-    --code-bg: #111111;        
-    --search-bg: #111111;      
-    --card-hover: #222222;     
+    --code-bg: #0d1117;        /* Code blocks blend into background */
+    --search-bg: #0d1117;      
+    --card-hover: #21262d;   
 }
 
 [data-theme="dark"]{
