@@ -521,4 +521,4 @@ window.addEventListener('load', () => {
             }, 500); 
         }, 800); // <--- Increase this to test (e.g., 3000, 5000)
     }
-});
+}); 
