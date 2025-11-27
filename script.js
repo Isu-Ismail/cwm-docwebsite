@@ -483,3 +483,42 @@ function fallbackCopyText(text, callback) {
 function slugify(text) {
     return text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
 }
+/* =========================================
+   LOADING SCREEN LOGIC
+   ========================================= */
+// window.addEventListener('load', () => {
+//     const loader = document.getElementById('loading-screen');
+    
+//     // Check if loader exists to avoid errors
+//     if (loader) {
+//         // Optional: Add a small delay (e.g., 500ms) so users can actually see the animation
+//         // if your site loads too fast.
+//         setTimeout(() => {
+//             loader.classList.add('fade-out');
+            
+//             // Remove it from the DOM entirely after the fade transition finishes
+//             setTimeout(() => {
+//                 loader.style.display = 'none';
+//             }, 500); // Matches the CSS transition time
+//         }, 800); // The delay before hiding
+//     }
+// });
+
+/* =========================================
+   LOADING SCREEN LOGIC (TEST MODE)
+   ========================================= */
+window.addEventListener('load', () => {
+    const loader = document.getElementById('loading-screen');
+    
+    if (loader) {
+        // CHANGE THIS NUMBER: 3000 = 3 Seconds Delay
+        setTimeout(() => {
+            loader.classList.add('fade-out');
+            
+            // Remove from DOM after fade completes
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 500); 
+        }, 3000); // <--- Increase this to test (e.g., 3000, 5000)
+    }
+});
