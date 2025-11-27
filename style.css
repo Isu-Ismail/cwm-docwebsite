@@ -163,6 +163,11 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+.logo-icon {
+    height: 50px; /* Adjust this to match your text size */
+    width: 50px;
+}
+
 body {
     font-family: 'Inter', sans-serif;
     background-color: var(--bg-body);
@@ -189,6 +194,11 @@ body {
 }
 
 .nav-left { display: flex; align-items: center; gap: 1rem; }
+.logo a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
 .logo { font-weight: 800; font-size: 1.4rem; color: var(--accent); letter-spacing: 1px; white-space: nowrap; }
 .badge { background: var(--accent); color: var(--bg-body); font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-left: 8px; vertical-align: middle;}

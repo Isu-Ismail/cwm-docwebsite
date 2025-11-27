@@ -5,12 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CWM CLI</title>
+
+    <link rel="icon" type="image/svg+xml" href="logo5.svg">
+
     <link rel="stylesheet" href="style.css">
     <link
         href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap"
         rel="stylesheet">
 
-    <!-- FLASH FIX -->
     <script>
         (function () {
             // 1. List your available themes
@@ -40,7 +42,6 @@
 
     <nav class="navbar" id="mainNavbar">
         <div class="nav-left">
-            <!-- Mobile Hamburger -->
             <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Toggle Menu">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
@@ -49,18 +50,53 @@
                     <line x1="3" y1="18" x2="21" y2="18"></line>
                 </svg>
             </button>
-            <div class="logo">CWM <span class="badge">CLI</span></div>
+
+            <div class="logo" style="display: flex; align-items: center; gap: 10px;">
+                <svg class="logo-icon" viewBox="0 0 314 309" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M292.643 150.501C292.643 213.287 241.745 264.186 178.959 264.186C116.173 264.186 65.2744 213.287 65.2744 150.501C65.2744 87.7153 116.173 36.8172 178.959 36.8172C241.745 36.8172 292.643 87.7154 292.643 150.501Z"
+                        fill="var(--code-bg)" style="transition: fill 0.3s ease;" />
+
+                    <circle cx="243.959" cy="121.501" r="20" fill="var(--accent)" style="transition: fill 0.3s ease;" />
+
+                    <g filter="url(#filter0_d_0_1)">
+                        <path
+                            d="M197.459 25.0014L29.3968 152.099C28.861 152.505 28.8692 153.312 29.4132 153.707L197.459 275.501"
+                            stroke="var(--accent)" stroke-width="50" stroke-linecap="round"
+                            style="transition: stroke 0.3s ease;" />
+                    </g>
+
+                    <path d="M192.959 176.501C212.875 176.111 224.042 175.892 243.959 175.501" stroke="var(--accent)"
+                        stroke-width="40" stroke-linecap="round" style="transition: stroke 0.3s ease;" />
+
+                    <circle cx="192.959" cy="121.501" r="20" fill="var(--accent)" style="transition: fill 0.3s ease;" />
+
+                    <defs>
+                        <filter id="filter0_d_0_1" x="0" y="0" width="226.46" height="308.503"
+                            filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                            <feColorMatrix in="SourceAlpha" type="matrix"
+                                values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                            <feOffset dy="4" />
+                            <feGaussianBlur stdDeviation="2" />
+                            <feComposite in2="hardAlpha" operator="out" />
+                            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+                            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0_1" />
+                            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0_1" result="shape" />
+                        </filter>
+                    </defs>
+                </svg>
+
+                <span>CWM <span class="badge">CLI</span></span>
+            </div>
         </div>
 
         <div class="nav-controls">
-            <!-- Search Section -->
             <div class="search-container" id="searchContainer">
                 <input type="text" id="searchInput" placeholder="Search...">
-                <!-- Mobile Close Button -->
                 <button id="searchCloseBtn" class="search-close-btn" aria-label="Close Search">✕</button>
             </div>
 
-            <!-- Mobile Search Icon Trigger -->
             <button id="mobileSearchBtn" class="mobile-search-btn" aria-label="Open Search">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
@@ -83,11 +119,9 @@
     </nav>
 
     <div class="container">
-        <!-- Mobile Overlay -->
         <div id="mobileOverlay" class="mobile-overlay"></div>
 
         <aside class="sidebar" id="sidebar">
-            <!-- Filled by JS -->
         </aside>
 
         <main class="content">
@@ -98,7 +132,6 @@
                 <div class="install-box">
                     <span class="prompt">$</span>
                     <span id="install-cmd">pip install ...</span>
-                    <!-- Smart Copy Button -->
                     <button class="copy-btn" onclick="copyInstall(this)" aria-label="Copy Install Command">
                         <span class="btn-text">Copy</span>
                         <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -109,7 +142,6 @@
                     </button>
                 </div>
 
-                <!-- VERSION BUTTONS -->
                 <div id="version-wrapper" class="version-wrapper"></div>
 
                 <div id="alert-container" class="alert-grid"></div>
@@ -118,7 +150,6 @@
             <div class="divider"></div>
 
             <div id="docs-container">
-                <!-- Cards Filled by JS -->
             </div>
 
             <footer>

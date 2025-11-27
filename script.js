@@ -18,6 +18,28 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('popstate', loadDocContent);
     }
 });
+// Function to load the SVG file and inject it
+async function loadLogo() {
+    try {
+        // 1. Fetch the file
+        const response = await fetch('logo.html');
+        if (!response.ok) throw new Error("Could not load logo");
+        
+        // 2. Get the text content (the SVG code)
+        const svgCode = await response.text();
+        
+        // 3. Find the container and inject it
+        const container = document.getElementById('logo-container');
+        if (container) {
+            container.innerHTML = svgCode;
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+// Run immediately
+loadLogo();
 
 function bindThemeButton() {
     const btn = document.getElementById('themeToggle');
