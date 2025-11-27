@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // === DOCS PAGE LOGIC ===
         renderDocSidebar(); 
         loadDocContent();
-        window.addEventListener('popstate', loadDocContent);
+         window.addEventListener('popstate', loadDocContent);
     }
 });
 // Function to load the SVG file and inject it
