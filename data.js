@@ -17,7 +17,7 @@ const cwmData = {
         {
             type: "upcoming",
             title: " (⓿_⓿) Meet Your New CLI Assistant Description (stay tuned for updates)",
-            text: "cwm ask gemini,openai,local - these commands allow you to use ai in your terminal with you own API keys and if you have local ollam models you cna configure them too"
+            text: "cwm ask gemini,openai,local - these commands will allow you to use ai in your terminal with your own API keys and if you have a local ollama models you can use  them too"
         },
 
         {
