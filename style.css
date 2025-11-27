@@ -165,7 +165,7 @@
 
 .logo-icon {
     height: 50px; /* Adjust this to match your text size */
-    width: 50px;
+    width: auto;
 }
 
 body {
@@ -571,6 +571,11 @@ pre {
         margin-right: -0.3cm;
         margin-bottom: 0.2cm ;
     }
+
+    .logo-icon {
+    height: 30px; /* Adjust this to match your text size */
+    width: auto;
+}
 
     .navbar { padding: 0 1rem; }
     .mobile-menu-btn { display: block; margin-right: 10px; }
