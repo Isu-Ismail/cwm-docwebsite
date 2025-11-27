@@ -498,7 +498,7 @@ window.addEventListener('load', () => {
             // Remove from DOM after fade completes
             setTimeout(() => {
                 loader.style.display = 'none';
-            }, 500); 
-        }, 500); // <--- Increase this to test (e.g., 3000, 5000)
+            }, 50); 
+        }, 50); // <--- Increase this to test (e.g., 3000, 5000)
     }
 }); 
