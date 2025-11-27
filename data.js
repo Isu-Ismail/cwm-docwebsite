@@ -2,18 +2,24 @@ const cwmData = {
     projectInfo: {
         name: "CWM",
         fullName: "Command Watch Manager (●'◡'●)",
-        version: "v1.0.0", // Updated to Latest
+        version: "v1.1.0", // Updated to Latest
         package: "cwm-cli", // Package name for pip install
         installCommand: "pip install cwm-cli", // Default command
         description: "A command-line tool designed to bring powerful history, saving, and session management features to your terminal commands without complex external dependencies.",
-        old_versions: [] // List of older versions
+        old_versions: ["v1.0.0"] // List of older versions
     },
     alerts: [
         {
             type: "news",
             title: "╰(*°▽°*)╯ Whats New !!!",
-            text: "Added Jump and project and will be avilable soon in release v1.1.0"
+            text: "v1.1.0 released ,check it out. jump and project commands added,ease the navigation between your porject form any path"
         },
+        {
+            type: "upcoming",
+            title: " (⓿_⓿) Meet Your New CLI Assistant Description (stay tuned for updates)",
+            text: "cwm ask gemini,openai,local - these commands allow you to use ai in your terminal with you own API keys and if you have local ollam models you cna configure them too"
+        },
+
         {
             type: "warning",
             title: " X_X Windows Limit",

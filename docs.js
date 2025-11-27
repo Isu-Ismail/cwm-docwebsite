@@ -4,7 +4,7 @@ const cwmDocs = {
         syntax: "cwm jump [name|id] [flags]",
         summary: "Instantly open your projects in VS Code, Terminal, or Jupyter without navigating folders.",
         logic: `
-            <p>The <code>jump</code> command uses a <strong>Detached Process</strong> model. Unlike aliases that change your current directory, CWM spawns a new independent window for your project.</p>
+            <p>The <code>jump</code> command uses a <strong>Detached Process</strong> model. unlike aliases that change your current directory, CWM spawns a new independent window for your project.</p>
             <p><strong>How it works:</strong></p>
             <ul>
                 <li><strong>Smart Launch:</strong> If the target app is a console tool (like <code>jupyter</code> or <code>cmd</code>), CWM opens a new console window that <em>inherits</em> your current Virtual Environment (venv). If it's a GUI tool (like VS Code), it launches silently in the background.</li>
@@ -13,8 +13,9 @@ const cwmDocs = {
             </ul>
         `,
         flags: [
-            { name: "<name>", desc: "The project Alias or ID. Can be comma-separated (e.g., <code>1,2</code>)." },
+            { name: "name", desc: "The project Alias or ID. Can be comma-separated (e.g., <code>1,2</code>)." },
             { name: "-t, --terminal", desc: "Also open a new detached terminal window at the project location." },
+            // { name: "-x, --exec <cmd>", desc: "Batch Execute: Opens terminals for all selected projects and auto-runs a command (e.g., 'npm run dev')." },
             { name: "-n <count>", desc: "Limit the list view. Use <code>-n all</code> to see everything." }
         ]
     },
@@ -27,7 +28,7 @@ const cwmDocs = {
             <p>Instead of blindly scanning every file (which takes forever), CWM uses a targeted approach:</p>
             <ol>
                 <li>It scans your <strong>User Home</strong> directory recursively.</li>
-                <li>It ignores heavy system folders defined in <code>.cwmignore</code> (e.g., <code>node_modules</code>, <code>AppData</code>, <code>Downloads</code>).</li>
+                <li>It ignores heavy system folders defined in <code>.cwmignore</code> (e.g., <code>node_modules</code>, <code>AppData</code>, <code>Downloads</code>). These defaults are OS-aware (Windows vs Linux).</li>
                 <li>It looks for <strong>Markers</strong> defined in your config (default: <code>.git</code>, <code>.cwm</code>).</li>
                 <li>Once a marker is found, it flags that folder as a Project and <strong>stops scanning deeper</strong> into that tree to prevent nested duplication.</li>
             </ol>
@@ -44,8 +45,8 @@ const cwmDocs = {
         summary: "Manage global settings, editors, and detection rules.",
         logic: `
             <p>Stores settings in <code>config.json</code> inside the Global Bank. CWM automatically migrates older configs to the newest version.</p>
+            <p><strong>Settings Hierarchy:</strong> Global settings (Editors, Markers) are applied system-wide. Local settings (History Source) override globals only when inside a specific project.</p>
             <p><strong>Editor Configuration:</strong></p>
-            <p>You can change what <code>cwm jump</code> opens. Defaults to <code>code</code> (VS Code).</p>
             <ul>
                 <li><strong>Jupyter:</strong> <code>cwm config --editor "jupyter notebook"</code></li>
                 <li><strong>PowerShell:</strong> <code>cwm config --editor "start powershell"</code></li>
@@ -133,11 +134,13 @@ const cwmDocs = {
         summary: "Versioning system for saved commands.",
         logic: `
             <p>Backups are created automatically on every save in <code>.cwm/data/backup/</code>.</p>
-            <p><strong>Merge Logic:</strong> Allows you to merge an old backup into current data. It detects conflicts (same variable name) and intelligently prompts to Rename, Delete, or Skip.</p>
+            <p><strong>Auto-Versioning:</strong> CWM keeps the last 10 versions of your <code>saved_cmds.json</code> file.</p>
+            <p><strong>Smart Merge:</strong> The merge command detects duplicates and prompts for conflicts. It supports chain-merging multiple backups at once by passing IDs (e.g. <code>1,2,3</code>).</p>
         `,
         flags: [
             { name: "list", desc: "Show available backups." },
-            { name: "merge -l", desc: "Interactively merge a backup." }
+            { name: "show <id>", desc: "View the contents of a backup." },
+            { name: "merge [ids]", desc: "Merge backup(s) into current data. Supports comma-separated IDs." }
         ]
     },
     "hello": {
@@ -186,19 +189,21 @@ const cwmDocs = {
     "git": {
         title: "Git Account Manager",
         syntax: "cwm git [add|list|setup]",
-        summary: "A complete solution for managing multiple GitHub accounts (e.g., Personal vs Work) on a single machine without SSH conflicts.",
+        summary: "Manage multiple GitHub accounts and automate repo setup.",
         logic: `
-            <p>This tool solves the 'Wrong SSH Key' problem by managing your <code>~/.ssh/config</code> file.</p>
+            <p><strong>SSH Management:</strong> Generates secure ED25519 keys and modifies <code>~/.ssh/config</code> to handle aliases (e.g., <code>git@github.com-work</code>).</p>
+            <p><strong>Repo Automation (setup):</strong></p>
             <ul>
-                <li><strong>add:</strong> Generates a secure <strong>ED25519</strong> SSH key and creates a Host Alias in your config (e.g., <code>Host github.com-work</code>).</li>
-                <li><strong>setup:</strong> Configures the current folder to use a specific identity. It sets the local <code>user.name</code> and <code>user.email</code>, and <strong>rewrites the remote URL</strong> from <code>git@github.com...</code> to <code>git@github.com-alias...</code>.</li>
-                <li>This ensures Git always uses the correct key for push/pull operations in this specific folder.</li>
+                <li>Detects OS and sets <code>core.autocrlf</code> to prevent line-ending warnings.</li>
+                <li>Detects project type (Node, Python, etc.) and auto-generates a <code>.gitignore</code>.</li>
+                <li>Rewrites the remote URL to use the correct SSH Identity.</li>
+                <li><strong>Auto-Push:</strong> Can optionally perform the full <code>git add .</code> -> <code>git commit</code> -> <code>git push</code> workflow for you.</li>
             </ul>
         `,
         flags: [
             { name: "add", desc: "Wizard: Generates SSH key, adds to config, and copies public key to clipboard." },
-            { name: "list", desc: "Displays all CWM-managed accounts and their key paths." },
-            { name: "setup", desc: "Interactive: Links current folder to an account, initializes repo, and fixes Remote URL." }
+            { name: "list", desc: "Displays all CWM-managed accounts." },
+            { name: "setup", desc: "Links folder to an account, creates .gitignore, and pushes initial code." }
         ]
     }
 };

@@ -21,10 +21,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function bindThemeButton() {
     const btn = document.getElementById('themeToggle');
+    // Update the array to include 'forest'
+    const themes = ['dark', 'light', 'retro', 'forest','cyberpunk','github-classic'];
+
     if(btn) {
         btn.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const currentIndex = themes.indexOf(currentTheme);
+            const nextIndex = (currentIndex + 1) % themes.length; // Cycles 0 -> 1 -> 2 -> 3 -> 0
+            
+            const newTheme = themes[nextIndex];
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
         });

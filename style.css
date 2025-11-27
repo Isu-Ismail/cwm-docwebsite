@@ -1,20 +1,75 @@
 :root {
-    /* Dark Theme (Default) */
-    --bg-body: #0a192f;
-    --bg-sidebar: #112240;
-    --bg-card: #112240;
-    --text-primary: #ccd6f6;
-    --text-secondary: #8892b0;
-    --accent: #0a87ad;
-    --border: #233554;
-    --code-bg: #020c1b;
-    --search-bg: #1d2d50;
-    --card-hover: #172a4d;
+    /* Global Layout Variables */
     --navbar-height: 60px;
+
+    /* PURE BLACK DEFAULT THEME (Minimalist) */
+    --bg-body: #000000;        /* True Black */
+    --bg-sidebar: #000000;     /* Seamless sidebar */
+    --bg-card: #111111;        /* Very dark grey for cards so they appear */
+    
+    --text-primary: #ffffff;   /* Pure White */
+    --text-secondary: #888888; /* Neutral Grey */
+    
+    --accent: #ffffff;         /* White Accent (Monochrome style) */
+    --border: #333333;         /* Dark grey borders for structure */
+    
+    --code-bg: #111111;        
+    --search-bg: #111111;      
+    --card-hover: #222222;     
 }
 
+[data-theme="dark"]{
+    
+  
+   
+    --navbar-height: 60px;
+
+    /* PURE BLACK DEFAULT THEME (Minimalist) */
+    --bg-body: #000000;        /* True Black */
+    --bg-sidebar: #000000;     /* Seamless sidebar */
+    --bg-card: #111111;        /* Very dark grey for cards so they appear */
+    
+    --text-primary: #ffffff;   /* Pure White */
+    --text-secondary: #888888; /* Neutral Grey */
+    
+    --accent: #ffffff;         /* White Accent (Monochrome style) */
+    --border: #333333;         /* Dark grey borders for structure */
+    
+    --code-bg: #111111;        
+    --search-bg: #111111;      
+    --card-hover: #222222;     
+}
+
+[data-theme="github-classic"] {
+    /* GitHub Dark Classic Palette */
+    --bg-body: #0d1117;        /* Signature GitHub Dark background */
+    --bg-sidebar: #161b22;     /* Slightly lighter panel color */
+    --bg-card: #161b22;        /* Cards match the sidebar */
+    
+    --text-primary: #c9d1d9;   /* High visibility Light Grey (Standard GitHub text) */
+    --text-secondary: #8b949e; /* Muted grey for descriptions */
+    
+    --accent: #79c0ff;         /* "Faded Blue" for Headings/Links */
+    --border: #30363d;         /* Subtle dark borders */
+    
+    --code-bg: #0d1117;        /* Code blocks blend into background */
+    --search-bg: #0d1117;      
+    --card-hover: #21262d;     /* A distinct lighter grey on hover */
+}
+
+/* Custom Badge Style for GitHub Theme */
+[data-theme="github-classic"] .cmd-name {
+    /* Soft Blue background similar to GitHub badges */
+    background: rgba(56, 139, 253, 0.15); 
+    color: #79c0ff; 
+    border: 1px solid rgba(56, 139, 253, 0.4);
+}
+
+
+
+
 [data-theme="light"] {
-    /* Light Theme */
+
     --bg-body: #f0f2f5;
     --bg-sidebar: #ffffff;
     --bg-card: #ffffff;
@@ -25,6 +80,86 @@
     --code-bg: #e2e8f0;
     --search-bg: #ffffff;
     --card-hover: #f8f9fa;
+}
+
+
+ [data-theme="retro"] {
+    /* Retro "Coffee & Cream" Theme */
+    --bg-body: #F3E9DC;        /* Your requested Cream color */
+    --bg-sidebar: #EBDCCB;     /* Slightly darker "Biscuit" for sidebar */
+    --bg-card: #f8ede1;        /* Lighter/White-ish for cards */
+    
+    --text-primary: #4A3B32;   /* Dark Coffee Brown */
+    --text-secondary: #8C7060; /* Muted Clay Brown */
+    
+    --accent: #C46D5E;         /* Terracotta/Rust (Retro Accent) */
+    /* Alternative Accent: #D4A373 (Golden Sand) */
+
+    --border: #d1b9a0;         
+    
+    --code-bg: #e5d8cc;      /* Darker cream for code blocks */
+    --search-bg: #FCF7F2;      
+    --card-hover: #FFFDFB;     
+}
+/* Fix for Retro Theme Command Badge */
+[data-theme="retro"] .cmd-name {
+    /* Uses your Brown Accent color (#C46D5E) with 15% opacity */
+    background: rgba(196, 109, 94, 0.15); 
+    
+    /* Optional: Change text to be slightly darker for better contrast */
+    color: #A85A4C; 
+}
+
+[data-theme="forest"] {
+    --bg-body: #013328;        /* Your Deep Green */
+    --bg-sidebar: #00221A;     /* Slightly darker for contrast */
+    --bg-card: #024536;        /* Lighter green for cards */
+    
+    --text-primary: #E0F2F1;   /* Very light mint white */
+    --text-secondary: #80CBC4; /* Soft teal-grey */
+    
+    --accent: #68c990;         /* Bright Spring Green */
+    --border: #045D48;
+    
+    --code-bg: #00221A;
+    --search-bg: #024536;
+    --card-hover: #035240;
+}
+
+/* Fix for Forest Theme Command Badge */
+[data-theme="forest"] .cmd-name {
+    /* Green background with transparency */
+    background: rgba(0, 230, 118, 0.15); 
+    color: #9fb7ab; 
+}
+
+[data-theme="cyberpunk"] {
+    /* Pitch Black & Deep Grid Backgrounds */
+    --bg-body: #000000;        
+    --bg-sidebar: #050505;     
+    --bg-card: #0f0f0f;        
+    
+    --text-primary: #ffffff;   /* Pure White for readability */
+    --text-secondary: #00f3ff; /* Neon Cyan for descriptions ("Matrix" style) */
+    
+    --accent: #fcee0a;         /* Cyber Yellow (The main pop color) */
+    --border: #333333;         /* Dark Grey borders to keep it clean */
+    
+    --code-bg: #121212;        
+    --search-bg: #1a1a1a;      
+    --card-hover: #1a1a1a;     
+}
+
+/* Fix for Cyberpunk Theme Command Badge */
+[data-theme="cyberpunk"] .cmd-name {
+    /* Neon Pink background with low opacity */
+    background: rgba(255, 0, 60, 0.2); 
+    
+    /* Cyber Yellow Text */
+    color: #fcee0a; 
+    
+    /* Optional: A thin pink border to look like a hologram */
+    border: 1px solid rgba(255, 0, 60, 0.5);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -349,21 +484,29 @@ pre {
 
 .copy-group {
     display: flex; flex-direction: column; align-items: center; gap: 5px; position: relative;
-    flex-shrink: 0;
+    flex-shrink: 0,;
 }
 
 .copy-icon-btn {
     background: none; border: none; color: var(--text-secondary); cursor: pointer;
-    padding: 6px; border-radius: 4px; transition: color 0.2s, background-color 0.2s;
-    display: flex; align-items: center; justify-content: center;
+    padding: 2px; border-radius: 4px; transition: color 0.2s, background-color 0.2s;
+    display: flex; align-items: center; justify-content: center;border-radius: 50%;
 }
 .copy-icon-btn:hover { color: var(--accent); background-color: rgba(255, 255, 255, 0.05); }
+
+.btn-text {
+    display: block; /* Show text on PC */
+}
+
+.btn-icon {
+    display: none; /* Hide icon on PC */
+}
 
 .copy-status {
     font-size: 0.7rem; color: var(--accent); font-weight: 600; opacity: 0;
     transition: opacity 0.3s ease; position: absolute; top: 35px; white-space: nowrap;
-}
-.copy-status.visible { opacity: 1; }
+}   
+
 
 .doc-summary { font-size: 1.1rem; color: var(--text-secondary); max-width: 800px; line-height: 1.6; }
 .doc-section { margin-bottom: 3rem; }
@@ -498,7 +641,7 @@ pre {
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 10px;
+        border-radius: 20px;
     }
 
     /* Switch from Text to Icon on Mobile */

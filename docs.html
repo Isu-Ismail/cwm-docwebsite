@@ -12,8 +12,25 @@
 
     <script>
         (function () {
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            document.documentElement.setAttribute('data-theme', savedTheme);
+            // 1. List your available themes
+            const themes = ['dark', 'light', 'retro', 'forest', 'cyberpunk', 'github-classic'];
+
+            // 2. Check if user already has a preference saved
+            const savedTheme = localStorage.getItem('theme');
+
+            if (savedTheme) {
+                // If they have a saved theme, use it
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } else {
+                // 3. If no save found, pick a RANDOM one
+                const randomTheme = themes[Math.floor(Math.random() * themes.length)];
+
+                // Apply it
+                document.documentElement.setAttribute('data-theme', randomTheme);
+
+                // Save it so it doesn't change on every refresh (Optional)
+                localStorage.setItem('theme', randomTheme);
+            }
         })();
     </script>
 </head>
