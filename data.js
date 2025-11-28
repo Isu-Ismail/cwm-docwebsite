@@ -28,7 +28,7 @@ const cwmData = {
         {
             type: "info",
             title: " ^_____^ Linux/Mac Users",
-            text: "Run 'cwm setup' after installation to enable instant history syncing."
+            text: "Linux: Run 'cwm setup'. macOS: Run `echo 'setopt INC_APPEND_HISTORY' >> ~/.zshrc` to enable instant sync."
         },
         
     ],
