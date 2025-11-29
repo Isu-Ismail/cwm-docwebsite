@@ -249,6 +249,8 @@ body {
     width: 100%; /* Critical: Must take full width of screen */
     background-color: var(--bg-sidebar);
     border-bottom: 1px solid var(--border);
+    position: relative;
+
 }
 
 .nav-left { display: flex; align-items: center; gap: 1rem; }
@@ -442,6 +444,16 @@ body {
 .alert-news{border-color: #07d71c;}
 .alert-info { border-color: var(--accent); }
 .alert-title { display: block; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary); }
+
+.alert-box code {
+    background-color: var(--search-bg); /* Darken the background slightly */
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace; /* Use your mono font */
+    font-size: 0.9em;
+    color: var(--accent); /* Make the text pop with your theme color */
+    border: var(--accent);
+}
 
 
 /* Commands */
@@ -644,7 +656,7 @@ pre {
     width: auto;
 }
 
-    .navbar { padding: 0 1rem; }
+    .navbar { padding: 0 1rem; z-index: 20;}
     .mobile-menu-btn { display: block; margin-right: 10px; }
     
     /* -- MOBILE SEARCH LOGIC -- */

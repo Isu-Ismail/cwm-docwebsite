@@ -1,3 +1,14 @@
+const COPY_BTN_HTML = `
+<button class="copy-btn" onclick="copyInstall(this)" aria-label="Copy Install Command">
+    <span class="btn-text">Copy</span>
+    <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2-2v1"></path>
+    </svg>
+</button>`;
+
+
 const cwmData = {
     projectInfo: {
         name: "CWM",
@@ -28,8 +39,10 @@ const cwmData = {
         {
             type: "info",
             title: " ^_____^ Linux/Mac Users",
-            text: "Linux: Run 'cwm setup'. <br> macOS: to enable instant sync Run <br> `echo 'setopt INC_APPEND_HISTORY' >> ~/.zshrc` ."
-        },
+            text: `Linux: Run 'cwm setup'. <br> 
+               macOS: to enable instant sync Run <br> 
+               <code>echo 'setopt INC_APPEND_HISTORY' >> ~/.zshrc</code>. ${COPY_BTN_HTML}` 
+    }
         
     ],
     categories: [
@@ -38,8 +51,8 @@ const cwmData = {
             id: "core",
             title: "Initialization & Core",
             commands: [
-                { id: "hello", name: "cwm hello", desc: "Displays welcome message, version, and system info.", example: "$ cwm hello" },
-                { id: "init", name: "cwm init", desc: "Initializes a new Local Bank (.cwm folder).", example: "$ cwm init" },
+                { id: "hello", name: "cwm hello", desc: "Displays welcome message, version, and system info.", example: "$ cwm hello " },
+                { id: "init", name: "cwm init", desc: "Initializes a new Local Bank (.cwm folder).", example: "$ cwm init"  },
                 { id: "setup", name: "cwm setup", desc: "Configures shell for instant history sync.", example: "$ cwm setup\n$ cwm setup --force" },
                 { id: "config", name: "cwm config", desc: "Manage settings (Editors, Markers, History Source).", example: "$ cwm config --editor 'code'\n$ cwm config --add-marker 'go.mod'" }
             ]
