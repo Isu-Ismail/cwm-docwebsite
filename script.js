@@ -339,6 +339,7 @@ function loadDocContent() {
     const urlParams = new URLSearchParams(window.location.search);
     const cmdId = urlParams.get('cmd');
     
+    // Animation reset
     container.classList.remove('fade-in');
     void container.offsetWidth; 
     container.classList.add('fade-in');
@@ -350,6 +351,22 @@ function loadDocContent() {
         return;
     }
 
+    // --- NEW: Generate Subcommands HTML ---
+    let subcommandsHtml = '';
+    if (details.subcommands && details.subcommands.length > 0) {
+        subcommandsHtml = `
+        <div class="doc-section">
+            <h4>Available Subcommands</h4>
+            <table>
+                <thead><tr><th>Command</th><th>Description</th></tr></thead>
+                <tbody>
+                    ${details.subcommands.map(s => `<tr><td class="flag">${s.name}</td><td>${s.desc}</td></tr>`).join('')}
+                </tbody>
+            </table>
+        </div>`;
+    }
+
+    // --- Existing: Generate Flags HTML ---
     let flagsHtml = '';
     if (details.flags && details.flags.length > 0) {
         flagsHtml = `
@@ -389,10 +406,10 @@ function loadDocContent() {
             <div class="logic-content">${details.logic}</div>
         </div>
 
+        ${subcommandsHtml}
         ${flagsHtml}
     `;
 }
-
 function copyDocSyntax(text, btnElement) {
     navigator.clipboard.writeText(text).then(() => {
         const statusSpan = btnElement.nextElementSibling;

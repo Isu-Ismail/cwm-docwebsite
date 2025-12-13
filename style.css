@@ -239,6 +239,10 @@ body {
     overflow: hidden;
 }
 
+h2 {
+    color: var(--accent);
+}
+
 /* Navbar */
 .navbar {
     display: flex;
@@ -646,9 +650,9 @@ pre {
 
     /* Adjust arrow size/spacing since text is gone */
     .back-link {
-        font-size: 2rem; /* Make arrow slightly larger */
-        margin-right: -0.3cm;
-        margin-bottom: 0.2cm ;
+        font-size: 1rem; /* Make arrow slightly larger */
+        margin-right: 2px;
+        padding: auto ;
     }
 
     .logo-icon {
@@ -741,4 +745,151 @@ pre {
     .btn-text { display: none; }
     .btn-icon { display: block; }
 
+}
+
+
+/* =========================================
+   Terminal Animation Module (Integrated)
+   ========================================= */
+
+/* 1. Map Terminal Colors to Main Theme Variables */
+:root {
+    --term-bg: var(--code-bg);        /* Matches code block background */
+    --term-header: var(--bg-sidebar); /* Matches sidebar/nav background */
+    --term-text: var(--text-primary); /* Matches main text color */
+    --term-dim: var(--text-secondary);/* Matches secondary text */
+    --term-accent: var(--accent);     /* Matches the theme accent */
+    --term-border: var(--border);     /* Matches theme borders */
+    
+    /* Standalone colors that work across most themes */
+    --term-green: #3fb950; 
+    --term-red: #ff5f56;
+    --term-yellow: #ffbd2e;
+}
+
+/* 2. Layout & Container */
+.term-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 100%; /* User Override */
+    margin: 2rem auto;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* 3. Dynamic Header (Text above terminal) */
+.term-dynamic-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    height: 80px; 
+    transition: opacity 0.5s ease;
+}
+
+.term-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    color: var(--term-accent); /* Takes theme accent color */
+}
+
+.term-desc {
+    color: var(--term-dim);
+    font-size: 1rem;
+}
+
+/* 4. The Terminal Window */
+.term-window {
+    width: 100%;
+    height: 12cm; /* User Override */
+    background-color: var(--term-bg);
+    border-radius: 12px;
+    
+    /* Border uses theme variable */
+    border: 1px solid var(--term-border);
+    
+    /* Default Shadow */
+    box-shadow: 0 20px 50px -10px rgba(0,0,0,0.5);
+    
+    overflow: hidden;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+/* Hover Effect: Glows with the Theme's Accent color */
+.term-window:hover {
+    border-color: var(--term-accent);
+    box-shadow: 
+        0 30px 60px -10px rgba(0,0,0,0.6), 
+        0 0 30px -5px var(--term-accent); /* Glows with accent */
+}
+
+/* 5. Mac-style Window Bar */
+.term-bar {
+    background-color: var(--term-header);
+    padding: 12px 16px;
+    display: flex;
+    gap: 8px;
+    border-bottom: 1px solid var(--term-border);
+}
+
+.term-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+/* Use theme vars for dots if available, otherwise defaults */
+.term-dot.red { background-color: var(--term-red); }
+.term-dot.yellow { background-color: var(--term-yellow); }
+.term-dot.green { background-color: var(--term-green); }
+
+/* 6. The Screen Content */
+.term-body {
+    padding: 24px;
+    color: var(--term-text);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    white-space: pre-wrap; 
+    height: calc(100% - 41px); /* Subtract header height */
+    overflow-y: hidden; /* Hide scrollbar during animation */
+}
+
+/* 7. Cursor & Syntax Highlighting */
+.term-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 1.2em;
+    background-color: var(--term-accent); /* Cursor matches accent */
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+}
+
+.term-cursor.typing {
+    animation: none;
+    opacity: 1;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Syntax Helpers */
+.term-prompt { 
+    color: var(--term-accent); 
+    font-weight: bold; 
+    margin-right: 10px; 
+}
+.term-cmd { color: var(--term-text); }
+.term-success { color: var(--term-green); }
+.term-accent { color: var(--term-accent); font-weight: bold; }
+.term-dim { color: var(--term-dim); }
+.term-info { color: var(--term-accent); opacity: 0.8; }
+.term-path { color: var(--text-secondary); text-decoration: underline; }
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+    .term-window { height: 350px; min-height: 200px; }
+    .term-body { padding: 16px; font-size: 0.85rem; }
+    .term-title { font-size: 1.2rem; }
 }

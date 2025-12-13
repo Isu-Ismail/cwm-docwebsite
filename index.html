@@ -8,6 +8,7 @@
 
     <link rel="icon" type="image/svg+xml" href="logo5.svg">
     <link rel="stylesheet" href="style.css">
+    <!-- <link rel="stylesheet" href="term.css"> -->
     <link
         href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap"
         rel="stylesheet">
@@ -126,8 +127,29 @@
             </div>
 
             <div id="intro-section" class="intro-header">
+
                 <h1 id="project-title">Loading...</h1>
                 <p id="project-desc">Loading...</p>
+                <div class="term-wrapper">
+                    <div class="term-dynamic-header">
+                        <div id="termTitle" class="term-title">CWM CLI</div>
+                        <div id="termDesc" class="term-desc">Initializing...</div>
+                    </div>
+
+                    <div class="term-window">
+                        <div class="term-bar">
+                            <div class="term-dot red"></div>
+                            <div class="term-dot yellow"></div>
+                            <div class="term-dot green"></div>
+                        </div>
+                        <div id="termBody" class="term-body">
+                            <span class="term-cursor"></span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h2>Install cwm ^_^</h2>
+                </div>
 
                 <div class="install-box">
                     <span class="prompt">$</span>
@@ -146,6 +168,7 @@
                 <div id="alert-container" class="alert-grid"></div>
             </div>
 
+
             <div class="divider"></div>
 
             <div id="docs-container"></div>
@@ -158,6 +181,7 @@
 
     <script src="data.js"></script>
     <script src="script.js"></script>
+    <script type="module" src="term.js"></script>
 </body>
 
 </html>

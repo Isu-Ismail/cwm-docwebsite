@@ -1,0 +1,122 @@
+
+:root {
+    --term-bg: #0d1117;
+    --term-header: #161b22;
+    --term-text: #c9d1d9;
+    --term-cursor: #58a6ff;
+    --term-accent: #58a6ff;
+    --term-green: #3fb950;
+    --term-dim: #8b949e;
+    --term-glow: rgba(88, 166, 255, 0.15);
+}
+@import "./style.css";
+
+
+/* The Wrapper that centers everything */
+.term-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    margin: 2rem auto;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* The text that changes above the terminal */
+.term-dynamic-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    height: 80px; /* Fixed height to prevent jumping */
+    transition: opacity 0.5s ease;
+}
+
+.term-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.term-desc {
+    color: var(--term-dim);
+    font-size: 1rem;
+}
+
+/* The Terminal Window */
+.term-window {
+    width: 100%;
+    background-color: var(--term-bg);
+    border-radius: 12px;
+    box-shadow: 0 20px 50px -10px rgba(0,0,0,0.5), 0 0 0 1px #30363d;
+    overflow: hidden;
+    position: relative;
+    transition: box-shadow 0.3s ease;
+    height: 12cm ;
+}
+
+.term-window:hover {
+    box-shadow: 0 30px 60px -10px rgba(0,0,0,0.6), 0 0 0 1px var(--term-accent), 0 0 30px var(--term-glow);
+}
+
+/* Mac-style Window Bar */
+.term-bar {
+    background-color: var(--term-header);
+    padding: 12px 16px;
+    display: flex;
+    gap: 8px;
+    border-bottom: 1px solid #30363d;
+}
+
+.term-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+.term-dot.red { background-color: #ff5f56; }
+.term-dot.yellow { background-color: #ffbd2e; }
+.term-dot.green { background-color: #27c93f; }
+
+/* The Screen Area */
+.term-body {
+    padding: 24px;
+    min-height: 300px;
+    color: var(--term-text);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    white-space: pre-wrap; /* Preserve formatting */
+}
+
+/* Cursor Animation */
+.term-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 1.2em;
+    background-color: var(--term-text);
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+}
+
+.term-cursor.typing {
+    animation: none;
+    opacity: 1;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Syntax Highlighting Classes */
+.term-prompt { color: var(--term-accent); font-weight: bold; margin-right: 10px; }
+.term-cmd { color: var(--term-text); }
+.term-success { color: var(--term-green); }
+.term-accent { color: var(--term-accent); font-weight: bold; }
+.term-dim { color: var(--term-dim); }
+.term-info { color: #79c0ff; }
+.term-path { color: #d2a8ff; text-decoration: underline; }
+
+/* Responsive */
+@media (max-width: 600px) {
+    .term-body { padding: 16px; font-size: 0.85rem; min-height: 250px; }
+    .term-title { font-size: 1.2rem; }
+}

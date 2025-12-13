@@ -1,100 +1,165 @@
-
-
-
 const cwmData = {
     projectInfo: {
         name: "CWM",
         fullName: "Command Watch Manager (●'◡'●)",
-        version: "v1.1.0", // Updated to Latest
+        version: "v2.1.0", // Updated to Latest
         package: "cwm-cli", // Package name for pip install
         installCommand: "pip install cwm-cli", // Default command
         description: "A command-line tool designed to bring powerful history, saving, and session management features to your terminal commands without complex external dependencies.",
-        old_versions: ["v1.0.0"] // List of older versions
+        old_versions: ["v1.0.0","v1.1.0"] // List of older versions
     },
     alerts: [
         {
             type: "news",
             title: "╰(*°▽°*)╯ Whats New !!!",
-            text: "v1.1.0 released ,check it out. jump and project commands added,ease the navigation between your porject form any path"
+            text: "v2.1.0 released! check it out.<strong>run,project,group,ask</strong> commands are added"
         },
         {
             type: "upcoming",
-            title: " (⓿_⓿) Meet Your New CLI Assistant Description (stay tuned for updates)",
-            text: "cwm ask gemini,openai,local - these commands will allow you to use ai in your terminal with your own API keys and if you have a local ollama models you can use  them too"
+            title: "(⓿_⓿) Meet Your New CLI Assistant",
+            text: "Ask your assistant from your terminal <br> <code>cwm ask gemini</code>"
         },
-
         {
             type: "warning",
-            title: " X_X Windows Limit",
+            title: "X_X Windows Limit",
             text: "Standard cmd.exe does not save history to file. Use PowerShell or Git Bash for history features."
         },
         {
             type: "info",
-            title: " ^_____^ Linux/Mac Users",
-            text: `Linux: Run 'cwm setup'. <br> 
-               macOS: to enable instant sync Run <br> 
-               <code>echo 'setopt INC_APPEND_HISTORY' >> ~/.zshrc</code>.` 
-    }
-        
+            title: "^_____^ Linux/Mac Users",
+            text: "Linux & macOs users : To enable instant sync Run <br> <code>cwm setup</code>"
+                         
+        }
     ],
     categories: [
-       
         {
-            id: "core",
-            title: "Initialization & Core",
+            id: "start",
+            title: "Getting Started",
             commands: [
-                { id: "hello", name: "cwm hello", desc: "Displays welcome message, version, and system info.", example: "$ cwm hello " },
-                { id: "init", name: "cwm init", desc: "Initializes a new Local Bank (.cwm folder).", example: "$ cwm init"  },
-                { id: "setup", name: "cwm setup", desc: "Configures shell for instant history sync.", example: "$ cwm setup\n$ cwm setup --force" },
-                { id: "config", name: "cwm config", desc: "Manage settings (Editors, Markers, History Source).", example: "$ cwm config --editor 'code'\n$ cwm config --add-marker 'go.mod'" }
+                { 
+                    id: "hello", 
+                    name: "cwm hello", 
+                    desc: "Displays welcome message, version, and system info.", 
+                    example: "$ cwm hello" 
+                },
+                { 
+                    id: "init", 
+                    name: "cwm init", 
+                    desc: "Initializes a new Local Bank (.cwm folder) in the current directory.", 
+                    example: "$ cwm init" 
+                },
+                { 
+                    id: "bank", 
+                    name: "cwm bank", 
+                    desc: "Manage storage locations (Local vs Global banks).", 
+                    example: "$ cwm bank info\n$ cwm bank clean\n$ cwm bank delete --local" 
+                },
             ]
         },
         {
-            id: "saving",
-            title: "Saving & Managing",
-            commands: [
-                { id: "save", name: "cwm save", desc: "Handles saving variables, raw commands, and archives.", example: "$ cwm save my-var='cwm hello' \n$ cwm save -b my-var \n$ cwm save --arch" },
-                { id: "bank", name: "cwm bank", desc: "Manage the storage banks (Local vs Global).", example: "$ cwm bank info\n$ cwm bank delete --global | --local" },
-                { id: "clear", name: "cwm clear", desc: "Clean up saved commands or history.", example: "$ cwm clear --saved -f 'cwm' \n$ cwm clear --hist --all" },
-                { id: "backup", name: "cwm backup", desc: "Manage backups of your saved commands.", example: "$ cwm backup list\n$ cwm backup merge -l | -cl " }
-            ]
-        },
-        {
-            id: "retrieving",
-            title: "Retrieving Data",
-            commands: [
-                { id: "get", name: "cwm get", desc: "Get commands from Bank, History, or Archives.", example: "$ cwm get my-var\n$ cwm get --hist -f 'pip' -n 10\n$ cwm get --cached [filters]" }
-            ]
-        },
-         {
             id: "workspace",
             title: "Workspace Management",
             commands: [
-                { id: "jump", name: "cwm jump", desc: "Instantly open project folders in your editor or terminal.", example: "$ cwm jump my-api\n$ cwm jump 1,2 -t" },
-                { id: "project", name: "cwm project", desc: "Manage your project database (Scan, Add, Remove).", example: "$ cwm project scan\n$ cwm project add .\n$ cwm project remove -n all" },
-                { id: "watch", name: "cwm watch", desc: "Session management to track specific workflows.", example: "$ cwm watch start \n$ cwm watch stop --save" },
-                { id: "copy", name: "cwm copy", desc: "Context Packer for LLMs (File Tree & Content).", example: "$ cwm copy\n$ cwm copy --tree" },
-                {
-                    id: "git",
-                    name: "cwm git",
-                    desc: "Manage multiple GitHub accounts (SSH keys) and auto-configure local repos.",
-                    example: "$ cwm git add\n$ cwm git setup"
-                }
+                
+                { 
+                    id: "project", 
+                    name: "cwm project", 
+                    desc: "Manage your project database (Scan, Add, Remove).", 
+                    example: "$ cwm project scan\n$ cwm project add . --alias main\n$ cwm project list" 
+                },
+                
+                { 
+                    id: "group", 
+                    name: "cwm group", 
+                    desc: "Manage project groups for bulk actions.", 
+                    example: "$ cwm group add \n$ cwm group list" 
+                },
+                { 
+                    id: "jump", 
+                    name: "cwm jump", 
+                    desc: "Instantly open project folders in your editor or terminal.", 
+                    example: "$ cwm jump my-api\n$ cwm jump 2 -t\n$ cwm jump list" 
+                },
+                { 
+                    id: "run", 
+                    name: "cwm run", 
+                    desc: "Run scripts defined in project configuration.", 
+                    example: "$ cwm run project 1\n$ cwm run group\n$ cwm run gui" 
+                },
             ]
         },
-        // {
-        //     id: "utils",
-        //     title: "Utilities",
-        //     commands: [
-        //         { id: "watch", name: "cwm watch", desc: "Session management to track specific workflows.", example: "$ cwm watch start \n$ cwm watch stop --save" },
-        //         { id: "copy", name: "cwm copy", desc: "Context Packer for LLMs (File Tree & Content).", example: "$ cwm copy\n$ cwm copy --tree" },
-        //         {
-        //             id: "git",
-        //             name: "cwm git",
-        //             desc: "Manage multiple GitHub accounts (SSH keys) and auto-configure local repos.",
-        //             example: "$ cwm git add\n$ cwm git setup"
-        //         }
-        //     ]
-        // }
+        {
+            id: "core",
+            title: "Core & Configuration",
+            commands: [
+                { 
+                    id: "setup", 
+                    name: "cwm setup", 
+                    desc: "Install or verify shell hooks for history syncing.", 
+                    example: "$ cwm setup\n$ cwm setup --force" 
+                },
+                
+                { 
+                    id: "save", 
+                    name: "cwm save", 
+                    desc: "Save commands, variables, or archives.", 
+                    example: "$ cwm save my-key='value'\n$ cwm save -b before" 
+                },
+                { 
+                    id: "watch", 
+                    name: "cwm watch", 
+                    desc: "Record project-specific history or workflows.", 
+                    example: "$ cwm watch start \n$ cwm watch stop\n$ cwm watch status" 
+                },
+                { 
+                    id: "get", 
+                    name: "cwm get", 
+                    desc: "Retrieve saved commands from Bank, History, or Archives.", 
+                    example: "$ cwm get my-key\n$ cwm get --hist -n 10\n$ cwm get -ha -f pip -ex show" 
+                },
+                { 
+                    id: "config", 
+                    name: "cwm config", 
+                    desc: "Manage tool configuration (Editors, Markers, etc).", 
+                    example: "$ cwm config --editor code\n$ cwm config show\n$ cwm config --gemini" 
+                },
+                 
+                
+            ]
+        },
+        {
+            id: "utils",
+            title: "Utilities",
+            commands: [
+                { 
+                    id: "ask", 
+                    name: "cwm ask", 
+                    desc: "Ask AI for command help (Gemini, OpenAI, Local).", 
+                    example: "$ cwm ask gemini -s 'how do I undo git commit?'\n$ cwm ask "
+                },
+                { 
+                    id: "git", 
+                    name: "cwm git", 
+                    desc: "Manage GitHub accounts & SSH keys.", 
+                    example: "$ cwm git add\n$ cwm git setup" 
+                },
+                { 
+                    id: "copy", 
+                    name: "cwm copy", 
+                    desc: "Copy file contents or file trees to clipboard (Context Packer).", 
+                    example: "$ cwm copy --format\n$ cwm copy --tree\n$ cwm copy --condense" 
+                },
+                
+                
+                { 
+                    id: "clear", 
+                    name: "cwm clear", 
+                    desc: "Clear history, cache, or saved data.", 
+                    example: "$ cwm clear --sys-hist\n$ cwm clear --all" 
+                },
+               
+                
+            ]
+        }
     ]
 };
