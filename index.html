@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CWM CLI</title>
 
-    <link rel="icon" type="image/svg+xml" href="logo5.svg">
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
     <link rel="stylesheet" href="style.css">
     <!-- <link rel="stylesheet" href="term.css"> -->
     <link
@@ -126,10 +126,20 @@
                 <p class="loading-text">Fetching commands...</p>
             </div>
 
-            <div id="intro-section" class="intro-header">
-
-                <h1 id="project-title">Loading...</h1>
-                <p id="project-desc">Loading...</p>
+            <div id="intro-section" class="intro-header" style="margin-bottom: 1.5rem;">
+                <div
+                    style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.5rem;">
+                    <h1 id="project-title" style="margin: 0;">Loading...</h1>
+                    <a href="#install-section" class="download-link-btn"
+                        style="padding: 8px 18px; font-size: 0.9rem; border-radius: 30px; display: inline-flex; align-items: center; text-decoration: none;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"
+                            style="margin-right: 6px; vertical-align: middle;">
+                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+                        </svg>
+                        <span class="tab-text-label">Download CWM CLI</span>
+                    </a>
+                </div>
+                <p id="project-desc" style="margin-top: 0.5rem; margin-bottom: 1rem; line-height: 1.4;">Loading...</p>
                 <div class="term-wrapper">
                     <div class="term-dynamic-header">
                         <div id="termTitle" class="term-title">CWM CLI</div>
@@ -147,21 +157,160 @@
                         </div>
                     </div>
                 </div>
-                <div>
-                    <h2>Install cwm ^_^</h2>
+                <div id="install-section" style="scroll-margin-top: 80px;">
+                    <h2>Install CWM</h2>
                 </div>
 
-                <div class="install-box">
-                    <span class="prompt">$</span>
-                    <span id="install-cmd">pip install ...</span>
-                    <button class="copy-btn" onclick="copyInstall(this)" aria-label="Copy Install Command">
-                        <span class="btn-text">Copy</span>
-                        <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                <div class="install-tabs">
+                    <button class="tab-btn active" onclick="switchInstallTab('windows')">
+                        <svg class="tab-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"
+                            style="vertical-align: middle; margin-right: 6px;">
+                            <path
+                                d="M0 3.449L9.75 2.1v9.451H0V3.449zM0 12.45h9.75v9.45L0 20.551v-8.1zM11.25 1.899L24 0v11.55H11.25V1.899zM11.25 12.45H24v9.651l-12.75-1.8v-7.851z" />
                         </svg>
+                        <span class="tab-text-label">Windows</span>
                     </button>
+                    <button class="tab-btn" onclick="switchInstallTab('linux')">
+                        <svg class="tab-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"
+                            style="vertical-align: middle; margin-right: 6px;">
+                            <path
+                                d="M12 2a5 5 0 0 0-5 5c0 1.2.39 2.3 1.05 3.2C6.83 10.84 6 12.32 6 14c0 2.21 1.79 4 4 4h4c2.21 0 4-1.79 4-4 0-1.68-.83-3.16-2.05-3.8A4.954 4.954 0 0 0 17 7a5 5 0 0 0-5-5zm-2 4a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm4 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm-3.5 5h3a1.5 1.5 0 0 1 0 3h-3a1.5 1.5 0 0 1 0-3z" />
+                        </svg>
+                        <span class="tab-text-label">Linux (Ubuntu/Debian)</span>
+                    </button>
+                    <button class="tab-btn" onclick="switchInstallTab('macos')">
+                        <svg class="tab-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"
+                            style="vertical-align: middle; margin-right: 6px;">
+                            <path
+                                d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.17c.66-.81 1.11-1.93.99-3.06-1 .04-2.22.67-2.94 1.52-.64.74-1.2 1.88-1.05 3 .11.01.22.02.33.02 1-.02 2-.59 2.67-1.48z" />
+                        </svg>
+                        <span class="tab-text-label">macOS</span>
+                    </button>
+                </div>
+
+                <!-- Architecture selector -->
+                <div class="arch-selector" id="arch-selector">
+                    <span class="arch-label">Architecture:</span>
+                    <button class="arch-pill active" id="arch-amd64" onclick="switchArch('amd64', this)">x86_64 / AMD64</button>
+                    <button class="arch-pill" id="arch-arm64" onclick="switchArch('arm64', this)">ARM64</button>
+                </div>
+
+                <div class="install-content-wrapper">
+                    <div id="install-windows" class="install-tab-content active">
+                        <p class="tab-desc">Install via PowerShell (downloads and extracts the binary):</p>
+                        <div class="install-box">
+                            <span class="prompt">PS&gt;</span>
+                            <span id="install-windows-cmd" class="cmd-text"></span>
+                            <button class="copy-btn" onclick="copyCustomCmd(this, 'install-windows-cmd')"
+                                aria-label="Copy Command">
+                                <span class="btn-text">Copy</span>
+                                <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="install-actions">
+                            <a href="#" class="download-link-btn" id="dl-win-zip">Download Portable ZIP</a>
+                        </div>
+                        <p class="tab-desc-sub"><strong>Configure PATH Environment Variable:</strong></p>
+                        <div class="install-box sub-box">
+                            <span class="prompt">PS&gt;</span>
+                            <span id="install-windows-path"
+                                class="cmd-text">[System.Environment]::SetEnvironmentVariable("PATH",
+                                [System.Environment]::GetEnvironmentVariable("PATH", "User") + ";C:\cwm", "User")</span>
+                            <button class="copy-btn" onclick="copyCustomCmd(this, 'install-windows-path')"
+                                aria-label="Copy Command">
+                                <span class="btn-text">Copy</span>
+                                <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="install-linux" class="install-tab-content">
+                        <p class="tab-desc">Install the Debian package via apt:</p>
+                        <div class="install-box">
+                            <span class="prompt">$</span>
+                            <span id="install-linux-cmd" class="cmd-text"></span>
+                            <button class="copy-btn" onclick="copyCustomCmd(this, 'install-linux-cmd')"
+                                aria-label="Copy Command">
+                                <span class="btn-text">Copy</span>
+                                <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="install-actions">
+                            <a href="#"
+                                class="download-link-btn" id="dl-linux-deb">Download DEB Package</a>
+                            <a href="#"
+                                class="download-link-btn secondary" id="dl-linux-rpm">Download RPM Package</a>
+                        </div>
+                        <p class="tab-desc-sub"><strong>Manual PATH Configuration</strong> (if unpacking tarball
+                            manually):</p>
+                        <div class="install-box sub-box">
+                            <span class="prompt">$</span>
+                            <span id="install-linux-path" class="cmd-text">echo 'export PATH="$PATH:/path/to/cwm-folder"' >> ~/.bashrc</span>
+                            <button class="copy-btn" onclick="copyCustomCmd(this, 'install-linux-path')"
+                                aria-label="Copy Command">
+                                <span class="btn-text">Copy</span>
+                                <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="install-macos" class="install-tab-content">
+                        <p class="tab-desc">Install via curl & unpack to your bin folder:</p>
+                        <div class="install-box">
+                            <span class="prompt">$</span>
+                            <span id="install-macos-cmd" class="cmd-text"></span>
+                            <button class="copy-btn" onclick="copyCustomCmd(this, 'install-macos-cmd')"
+                                aria-label="Copy Command">
+                                <span class="btn-text">Copy</span>
+                                <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="install-actions">
+                            <a href="#" class="download-link-btn" id="dl-macos-tar">Download tar.gz Archive</a>
+                        </div>
+                        <p class="tab-desc-sub"><strong>Manual PATH Configuration</strong> (if not using
+                            /usr/local/bin):</p>
+                        <div class="install-box sub-box">
+                            <span class="prompt">$</span>
+                            <span id="install-macos-path" class="cmd-text">echo 'export
+                                PATH="$PATH:/path/to/cwm-folder"' >> ~/.zshrc</span>
+                            <button class="copy-btn" onclick="copyCustomCmd(this, 'install-macos-path')"
+                                aria-label="Copy Command">
+                                <span class="btn-text">Copy</span>
+                                <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="version-wrapper" class="version-wrapper"></div>

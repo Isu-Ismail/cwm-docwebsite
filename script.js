@@ -1,3 +1,10 @@
+// Global downloads config, populated from downloads.json
+let downloadsConfig = null;
+// Currently selected CPU architecture: 'amd64' or 'arm64'
+let selectedArch = 'amd64';
+// Currently selected version tag (null = latest)
+let selectedVersionTag = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     bindThemeButton();
     setupMobileMenu();
@@ -7,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('intro-section')) {
         // === HOME PAGE LOGIC ===
         loadProjectInfo();
+        loadDownloads(); // Load downloads.json then populate install section
         renderVersions(); // Render version buttons
         renderSidebar();
         renderContent();
@@ -116,7 +124,11 @@ function loadProjectInfo() {
 
     document.getElementById('project-title').textContent = cwmData.projectInfo.fullName;
     document.getElementById('project-desc').textContent = cwmData.projectInfo.description;
-    document.getElementById('install-cmd').textContent = cwmData.projectInfo.installCommand;
+
+    const installCmdEl = document.getElementById('install-cmd');
+    if (installCmdEl) {
+        installCmdEl.textContent = cwmData.projectInfo.installCommand;
+    }
 
     const alertContainer = document.getElementById('alert-container');
     if(alertContainer) {
@@ -127,6 +139,79 @@ function loadProjectInfo() {
             div.innerHTML = `<span class="alert-title">${alert.title}</span>${alert.text}`;
             alertContainer.appendChild(div);
         });
+    }
+}
+
+// --- DOWNLOADS CONFIG LOADER ---
+async function loadDownloads() {
+    try {
+        const res = await fetch('downloads.json');
+        if (!res.ok) throw new Error('Failed to load downloads.json');
+        downloadsConfig = await res.json();
+        applyDownloads(downloadsConfig.latest);
+    } catch (e) {
+        console.warn('downloads.json not found, skipping download config.', e);
+    }
+}
+
+/**
+ * Given a version tag (e.g. "v1.0.0"), build the download URL for a package file.
+ */
+function buildUrl(tag, file) {
+    const cfg = downloadsConfig;
+    // "latest" tag uses the /latest/ path alias so links always resolve to the newest release
+    if (!tag || tag === cfg.latest) {
+        return `${cfg.repoBase}/latest/download/${file}`;
+    }
+    return `${cfg.repoBase}/download/${tag}/${file}`;
+}
+
+/**
+ * Apply all install commands and download button hrefs for a given version tag.
+ * Uses the globally selected architecture (selectedArch).
+ * Pass null/undefined to default to the latest tag from downloads.json.
+ */
+function applyDownloads(versionTag) {
+    if (!downloadsConfig) return;
+    const tag = versionTag !== undefined ? versionTag : selectedVersionTag;
+    selectedVersionTag = tag; // keep in sync
+    const pkgs = downloadsConfig.packages;
+    const arch = selectedArch; // 'amd64' or 'arm64'
+
+    // Windows
+    const win = pkgs.windows[arch];
+    if (win) {
+        const winUrl = buildUrl(tag, win.file);
+        const winCmdEl = document.getElementById('install-windows-cmd');
+        const dlWinZip = document.getElementById('dl-win-zip');
+        if (winCmdEl) winCmdEl.textContent = win.install_cmd.replace('{url}', winUrl);
+        if (dlWinZip) { dlWinZip.href = winUrl; dlWinZip.textContent = win.label; }
+    }
+
+    // Linux — deb & rpm for selected arch
+    const linuxDeb = pkgs.linux[arch]?.deb;
+    const linuxRpm = pkgs.linux[arch]?.rpm;
+    const linuxCmdEl = document.getElementById('install-linux-cmd');
+    const dlLinuxDeb = document.getElementById('dl-linux-deb');
+    const dlLinuxRpm = document.getElementById('dl-linux-rpm');
+    if (linuxDeb) {
+        const debUrl = buildUrl(tag, linuxDeb.file);
+        if (linuxCmdEl) linuxCmdEl.textContent = linuxDeb.install_cmd.replace('{url}', debUrl);
+        if (dlLinuxDeb) { dlLinuxDeb.href = debUrl; dlLinuxDeb.textContent = linuxDeb.label; }
+    }
+    if (linuxRpm) {
+        const rpmUrl = buildUrl(tag, linuxRpm.file);
+        if (dlLinuxRpm) { dlLinuxRpm.href = rpmUrl; dlLinuxRpm.textContent = linuxRpm.label; }
+    }
+
+    // macOS
+    const mac = pkgs.macos[arch];
+    if (mac) {
+        const macUrl = buildUrl(tag, mac.file);
+        const macosCmdEl = document.getElementById('install-macos-cmd');
+        const dlMacosTar = document.getElementById('dl-macos-tar');
+        if (macosCmdEl) macosCmdEl.textContent = mac.install_cmd.replace('{url}', macUrl);
+        if (dlMacosTar) { dlMacosTar.href = macUrl; dlMacosTar.textContent = mac.label; }
     }
 }
 
@@ -161,16 +246,20 @@ function renderVersions() {
 }
 
 function updateInstallCmd(pkg, ver, btnElement) {
-    const cmdSpan = document.getElementById('install-cmd');
-    
-    if (ver) {
-        cmdSpan.textContent = `pip install ${pkg}==${ver}`;
-    } else {
-        cmdSpan.textContent = `pip install ${pkg}`;
-    }
-
+    const versionTag = ver ? `v${ver}` : null; // null = latest
+    applyDownloads(versionTag);
     document.querySelectorAll('.ver-btn').forEach(b => b.classList.remove('active'));
     btnElement.classList.add('active');
+}
+
+/**
+ * Switch selected architecture and refresh all download links.
+ */
+function switchArch(arch, btnElement) {
+    selectedArch = arch;
+    document.querySelectorAll('.arch-pill').forEach(b => b.classList.remove('active'));
+    btnElement.classList.add('active');
+    applyDownloads(selectedVersionTag); // re-apply with new arch
 }
 
 function renderSidebar() {
@@ -423,14 +512,10 @@ function copyDocSyntax(text, btnElement) {
 }
 
 // HOME PAGE COPY FUNCTION (Text Button)
-function copyInstall(btn) {
-    const text = document.getElementById('install-cmd').textContent;
+function copyCustomCmd(btn, elementId) {
+    const text = document.getElementById(elementId).textContent;
 
     const onSuccess = () => {
-        const originalHTML = btn.innerHTML;
-        // Change logic: If mobile, we might want to show a checkmark icon.
-        // For simplicity and robustness, we can change color and maybe text if visible.
-        
         btn.classList.add("copied");
         
         // Desktop Text Change
@@ -458,6 +543,15 @@ function copyInstall(btn) {
         // Fallback
         fallbackCopyText(text, onSuccess);
     }
+}
+
+function switchInstallTab(os) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.install-tab-content').forEach(content => content.classList.remove('active'));
+    
+    // Set active class on target button
+    event.currentTarget.classList.add('active');
+    document.getElementById(`install-${os}`).classList.add('active');
 }
 
 function fallbackCopyText(text, callback) {

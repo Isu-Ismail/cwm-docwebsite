@@ -1,0 +1,56 @@
+{
+  "repoBase": "https://github.com/Isu-Ismail/cwm-cli-go/releases",
+  "latest": "v1.0.0",
+  "packages": {
+    "windows": {
+      "amd64": {
+        "file": "cwm_windows_amd64.zip",
+        "label": "Download Portable ZIP (x64)",
+        "install_cmd": "Invoke-WebRequest -Uri {url} -OutFile cwm.zip; Expand-Archive -Path cwm.zip -DestinationPath C:\\cwm; Remove-Item cwm.zip"
+      },
+      "arm64": {
+        "file": "cwm_windows_arm64.zip",
+        "label": "Download Portable ZIP (ARM64)",
+        "install_cmd": "Invoke-WebRequest -Uri {url} -OutFile cwm.zip; Expand-Archive -Path cwm.zip -DestinationPath C:\\cwm; Remove-Item cwm.zip"
+      }
+    },
+    "linux": {
+      "amd64": {
+        "deb": {
+          "file": "cwm_linux_amd64.deb",
+          "label": "Download .deb (x64)",
+          "install_cmd": "wget {url} && sudo apt install ./cwm_linux_amd64.deb"
+        },
+        "rpm": {
+          "file": "cwm_linux_amd64.rpm",
+          "label": "Download .rpm (x64)",
+          "install_cmd": "wget {url} && sudo rpm -i cwm_linux_amd64.rpm"
+        }
+      },
+      "arm64": {
+        "deb": {
+          "file": "cwm_linux_arm64.deb",
+          "label": "Download .deb (ARM64)",
+          "install_cmd": "wget {url} && sudo apt install ./cwm_linux_arm64.deb"
+        },
+        "rpm": {
+          "file": "cwm_linux_arm64.rpm",
+          "label": "Download .rpm (ARM64)",
+          "install_cmd": "wget {url} && sudo rpm -i cwm_linux_arm64.rpm"
+        }
+      }
+    },
+    "macos": {
+      "amd64": {
+        "file": "cwm_darwin_amd64.tar.gz",
+        "label": "Download tar.gz (Intel)",
+        "install_cmd": "curl -sSfL {url} | tar -xz && sudo mv cwm /usr/local/bin/"
+      },
+      "arm64": {
+        "file": "cwm_darwin_arm64.tar.gz",
+        "label": "Download tar.gz (Apple Silicon)",
+        "install_cmd": "curl -sSfL {url} | tar -xz && sudo mv cwm /usr/local/bin/"
+      }
+    }
+  }
+}

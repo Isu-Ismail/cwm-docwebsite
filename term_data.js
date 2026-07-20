@@ -1,162 +1,77 @@
 /* term_data.js - The scenarios to play */
 export const termData = [
-    // --- 1. INSTALLATION ---
+    // --- 1. INSTALLATION & INFO ---
     {
-        title: "Install CWM",
-        desc: "Get started instantly via pip.",
-        command: "pip install cwm-cli",
+        title: "Download & Install CWM",
+        desc: "Install the standalone compiled Go binary on your system.",
+        command: "cwm hello",
         output: `
-<span class="term-dim">Collecting cwm-cli</span>
-<span class="term-dim">Downloading cwm_cli-1.1.0-py3-none-any.whl (45 kB)</span>
-<span class="term-dim">Installing collected packages: click, rich, pyperclip, cwm-cli</span>
-<span class="term-success">Successfully installed cwm-cli-1.1.0</span>
+<span class="term-success">CWM v2.0</span>
+<span class="term-blue-bold">System:</span>  windows amd64
+<span class="term-blue-bold">History:</span> C:/Users/ismail/AppData/Roaming/Microsoft/Windows/PowerShell/PSReadLine/ConsoleHost_history.txt
+
+<span class="term-dim">CWM is initialized and ready.</span>
         `
     },
 
-    // --- 2. JUMP (Navigation) ---
+    // --- 2. VAULT SAVE ---
     {
-        title: "Project Teleporter",
-        desc: "Jump to a project using fuzzy matching. Opens Editor & Terminal instantly.",
-        command: "cwm jump api -t",
+        title: "Save Vault Commands",
+        desc: "Save commands under variable names. Conflict warning protects you.",
+        command: "cwm save test='pytest -vv'",
         output: `
-<span class="term-success">✔</span> Found project: <span class="term-blue-bold">my-backend-api</span>
-<span class="term-dim">@ C:\Users\Dev\work\my-backend-api</span>
+<span class="term-success">Saved test -> pytest -vv</span>
 
-<span class="term-accent">i</span> Launching Editor...
-<span class="term-accent">i</span> Launching Terminal...
-<span class="term-dim">Done.</span>
+<span class="term-dim">Hint: Run 'cwm get test' to retrieve.</span>
         `
     },
 
-    // --- 3. SCAN (Discovery) ---
+    // --- 3. CONFLICT PROTECTION & EDITING ---
     {
-        title: "Auto-Discovery",
-        desc: "Scan your drive to find and register projects automatically.",
-        command: "cwm project scan",
+        title: "Conflict Protection",
+        desc: "CWM prevents overwriting existing keys unless explicit flags are passed.",
+        command: "cwm save test='pytest --lf'",
         output: `
-<span class="term-bold">Starting scan in:</span> /home/user/dev
-<span class="term-accent">Scanning... (42 folders)</span> <span class="term-dim">.../dev/node_modules</span>
-
-<span class="term-dim">Scan Summary: Checked 150 folders in 0.4s.</span>
-<span class="term-success">✔ Found 2 candidates.</span>
-
-Candidate: <span class="term-accent">react-dashboard</span>
-Add project? [y/n/s]: y
- <span class="term-accent">?</span> Enter Project Alias: <span class="term-white-bold">dash</span>
-<span class="term-green">-> Saved as 'dash'</span>
-
-<span class="term-success">Saved 1 new projects!</span>
+<span class="term-error">Error: Variable 'test' already exists. (Use -e to edit or -ev to rename)</span>
         `
     },
 
-    // --- 4. SAVE (Vault) ---
+    // --- 4. EXPLICIT EDIT ---
     {
-        title: "Save Variables",
-        desc: "Save complex commands with aliases for easy reuse.",
-        command: "cwm save build=\"npm run build --prod\"",
+        title: "Explicit Edit",
+        desc: "Use the -e flag to overwrite the command alias.",
+        command: "cwm save -e test='pytest --lf'",
         output: `
-<span class="term-success">✔</span> Saved variable: <span class="term-accent">build</span>
-<span class="term-dim">Value: "npm run build --prod"</span>
-
-<span class="term-dim">Tip: Run it with</span> <span class="term-cmd">cwm get build</span>
+<span class="term-success">Updated test -> pytest --lf</span>
         `
     },
 
-    // --- 5. GET (Search) ---
+    // --- 5. SEARCH & RETRIEVAL ---
     {
-        title: "Deep History Search",
-        desc: "Filter your shell history and copy commands instantly.",
-        command: "cwm get --hist -f \"docker,run\" -ex \"fail\"",
+        title: "Fuzzy History Search",
+        desc: "Search logged executions and copy commands directly to clipboard.",
+        command: "cwm get -h -f 'git,commit'",
         output: `
-<span class="term-accent">History (3/500)</span>
-<span class="term-accent">[1]</span> <span class="term-green">docker run -d -p 80:80 nginx</span>
-<span class="term-accent">[2]</span> <span class="term-green">docker run --rm -it ubuntu bash</span>
-<span class="term-accent">[3]</span> <span class="term-green">docker compose up --build</span>
+<span class="term-accent">History Logs (Path: c:\\Users\\ismail\\cwm)</span>
+<span class="term-accent">[1]</span> git commit -m "feat: setup GoReleaser"
+<span class="term-accent">[2]</span> git commit -m "fix: database schema"
+<span class="term-accent">[3]</span> git add . && git commit -m "update docs"
 
 <span class="term-dim">---</span>
 Copy (ID): 1
-<span class="term-success">✔ Copied command #1 -></span> <span class="term-accent">docker run -d -p 80:80 nginx</span>
+<span class="term-success">✔ Copied command #1 -> git commit -m "feat: setup GoReleaser"</span>
         `
     },
 
-    // --- 6. COPY (Context Packer) ---
+    // --- 6. MULTI-PC SYNC ---
     {
-        title: "Context Packer for AI",
-        desc: "Pack project files into your clipboard to paste into LLMs.",
-        command: "cwm copy 1,4 --format",
+        title: "Two-Way Multi-PC Sync",
+        desc: "Setup shared path copy bank for instant two-way SQLite database merges.",
+        command: "cwm config -c 'Z:/Shared/cwm.db'",
         output: `
-<span class="term-bold">Processing 2 files...</span>
- <span class="term-dim">Packing:</span> src/utils.py
- <span class="term-dim">Packing:</span> src/main.py
-
-<span class="term-success">✔ Copied 2 files to clipboard. [Formatted]</span>
-        `
-    },
-
-    // --- 7. RUN (Orchestrator) ---
-    {
-        title: "Process Orchestrator",
-        desc: "Run a group of projects (microservices) in the background.",
-        command: "cwm run group backend",
-        output: `
-<span class="term-bold">Starting group 'backend'...</span>
- <span class="term-success">✔</span> <span class="term-white-bold">api-gateway    </span>: Started (PID 1204)
- <span class="term-success">✔</span> <span class="term-white-bold">auth-service   </span>: Started (PID 1205)
- <span class="term-success">✔</span> <span class="term-white-bold">db-worker      </span>: Started (PID 1206)
-
-        `
-    },
-
-    // --- 8. ASK (AI Assistant) ---
-    {
-        title: "AI Assistant",
-        desc: "Ask Gemini or OpenAI coding questions directly in the terminal.",
-        command: "cwm ask gemini -s \"kill port 3000\"",
-        output: `
-<span class="term-purple">Model:</span> gemini
-<span class="term-purple">DevBot:</span> <span class="term-orange">id:1</span>
-To kill the process on port 3000:
-
-<span class="term-cmd">npx kill-port 3000</span>
-
-Or on Windows:
-<span class="term-cmd">netstat -ano | findstr :3000</span>
-<span class="term-cmd">taskkill /PID &lt;PID&gt; /F</span>
-        `
-    },
-
-    // --- 9. GIT (Multi-Account) ---
-    {
-        title: "Git Account Switcher",
-        desc: "Configure local repos with specific SSH keys and user emails.",
-        command: "cwm git setup",
-        output: `
-<span class="term-accent">? Select Account:</span>
- <span class="term-accent">1)</span> Work <span class="term-dim">(github-work)</span>
- <span class="term-accent">2)</span> Personal <span class="term-dim">(github-personal)</span>
-
-<span class="term-dim">Enter number:</span> 1
-<span class="term-accent">Configuring local repo settings...</span>
- <span class="term-success">✔ User set to John Doe &lt;john@work.com&gt;</span>
- <span class="term-success">✔ Remote updated to use alias.</span>
-        `
-    },
-
-    // --- 10. CLEAN (Maintenance) ---
-    {
-        title: "History Cleaning",
-        desc: "Deduplicate and clean up your shell history file.",
-        command: "cwm clear --sys-hist --apply",
-        output: `
-<span class="term-accent">[1/4]</span> Locating history file...
-<span class="term-accent">[3/4]</span> Deduplicating (keep newest)...
-<span class="term-accent">[4/4]</span> Filtering & validating...
-
-<span class="term-success">✔ Cleaning complete!</span>
- <span class="term-dim">Saved preview to: .bash_history_cleaned</span>
- <span class="term-dim">Removed:</span> <span class="term-error">12</span> <span class="term-dim">(invalid)</span>
-
-<span class="term-success">✔ File .bash_history successfully updated!</span>
+<span class="term-success">Set copy bank path: Z:/Shared/cwm.db</span>
+<span class="term-dim">Performing initial two-way SQL merge...</span>
+<span class="term-success">✔ Synchronization complete! Merged 15 variables, 342 history entries.</span>
         `
     }
 ];

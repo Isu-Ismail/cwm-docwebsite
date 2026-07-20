@@ -1,34 +1,28 @@
 const cwmData = {
     projectInfo: {
         name: "CWM",
-        fullName: "Command Watch Manager (●'◡'●)",
-        version: "v2.1.0", // Updated to Latest
-        package: "cwm-cli", // Package name for pip install
-        installCommand: "pip install cwm-cli", // Default command
-        description: "A command-line tool designed to bring powerful history, saving, and session management features to your terminal commands without complex external dependencies.",
-        old_versions: ["v1.0.0","v1.1.0"] // List of older versions
+        fullName: "Command Watch Manager",
+        version: "v1.0.0", // Updated to Go version
+        package: "cwm-cli-go",
+        installCommand: "cwm setup",
+        description: "A lightning-fast, zero-dependency Go CLI utility to vault commands, track shell history, and sync databases.",
+        old_versions: []
     },
     alerts: [
         {
             type: "news",
-            title: "╰(*°▽°*)╯ Whats New !!!",
-            text: "v2.1.0 released! check it out.<strong>run,project,group,ask</strong> commands are added"
-        },
-        {
-            type: "upcoming",
-            title: "(⓿_⓿) Meet Your New CLI Assistant",
-            text: "Ask your assistant from your terminal <br> <code>cwm ask gemini</code>"
-        },
-        {
-            type: "warning",
-            title: "X_X Windows Limit",
-            text: "Standard cmd.exe does not save history to file. Use PowerShell or Git Bash for history features."
+            title: "Go Migration Complete!",
+            text: "CWM has been completely rewritten in <strong>Go</strong>! Enjoy instant execution speeds, zero Python dependencies, and a robust SQLite storage backend."
         },
         {
             type: "info",
-            title: "^_____^ Linux/Mac Users",
-            text: "Linux & macOs users : To enable instant sync Run <br> <code>cwm setup</code>"
-                         
+            title: "Multi-PC Synchronization",
+            text: "Sync your shell commands across multiple computers automatically using our two-way SQL merge configuration: <code>cwm config -c /shared/path</code>."
+        },
+        {
+            type: "warning",
+            title: "History Safety Checks",
+            text: "Custom history file paths are automatically validated to ensure they are valid files containing 'history' in their names, with a safety limit of 100 words per line."
         }
     ],
     categories: [
@@ -36,129 +30,66 @@ const cwmData = {
             id: "start",
             title: "Getting Started",
             commands: [
-                { 
-                    id: "hello", 
-                    name: "cwm hello", 
-                    desc: "Displays welcome message, version, and system info.", 
-                    example: "$ cwm hello" 
+                {
+                    id: "hello",
+                    name: "cwm hello",
+                    desc: "Displays system diagnostics, active shell info, and history log status.",
+                    example: "$ cwm hello"
                 },
-                { 
-                    id: "init", 
-                    name: "cwm init", 
-                    desc: "Initializes a new Local Bank (.cwm folder) in the current directory.", 
-                    example: "$ cwm init" 
-                },
-                { 
-                    id: "bank", 
-                    name: "cwm bank", 
-                    desc: "Manage storage locations (Local vs Global banks).", 
-                    example: "$ cwm bank info\n$ cwm bank clean\n$ cwm bank delete --local" 
-                },
-            ]
-        },
-        {
-            id: "workspace",
-            title: "Workspace Management",
-            commands: [
-                
-                { 
-                    id: "project", 
-                    name: "cwm project", 
-                    desc: "Manage your project database (Scan, Add, Remove).", 
-                    example: "$ cwm project scan\n$ cwm project add . --alias main\n$ cwm project list" 
-                },
-                
-                { 
-                    id: "group", 
-                    name: "cwm group", 
-                    desc: "Manage project groups for bulk actions.", 
-                    example: "$ cwm group add \n$ cwm group list" 
-                },
-                { 
-                    id: "jump", 
-                    name: "cwm jump", 
-                    desc: "Instantly open project folders in your editor or terminal.", 
-                    example: "$ cwm jump my-api\n$ cwm jump 2 -t\n$ cwm jump list" 
-                },
-                { 
-                    id: "run", 
-                    name: "cwm run", 
-                    desc: "Run scripts defined in project configuration.", 
-                    example: "$ cwm run project 1\n$ cwm run group\n$ cwm run gui" 
-                },
+                {
+                    id: "setup",
+                    name: "cwm setup",
+                    desc: "Auto-configures shell profiles (Bash, Zsh, PowerShell) for instant command history sync and deduplication.",
+                    example: "$ cwm setup"
+                }
             ]
         },
         {
             id: "core",
-            title: "Core & Configuration",
+            title: "Command Vault",
             commands: [
-                { 
-                    id: "setup", 
-                    name: "cwm setup", 
-                    desc: "Install or verify shell hooks for history syncing.", 
-                    example: "$ cwm setup\n$ cwm setup --force" 
+                {
+                    id: "save",
+                    name: "cwm save",
+                    desc: "Save commands under alias variables. Prevents accidental overwrites unless explicit edit (-e) or rename (-ev) mode is used.",
+                    example: "$ cwm save test='pytest -vv'\n$ cwm save -e test='pytest -vv --lf'\n$ cwm save -ev test test_unit"
                 },
-                
-                { 
-                    id: "save", 
-                    name: "cwm save", 
-                    desc: "Save commands, variables, or archives.", 
-                    example: "$ cwm save my-key='value'\n$ cwm save -b before" 
-                },
-                { 
-                    id: "watch", 
-                    name: "cwm watch", 
-                    desc: "Record project-specific history or workflows.", 
-                    example: "$ cwm watch start \n$ cwm watch stop\n$ cwm watch status" 
-                },
-                { 
-                    id: "get", 
-                    name: "cwm get", 
-                    desc: "Retrieve saved commands from Bank, History, or Archives.", 
-                    example: "$ cwm get my-key\n$ cwm get --hist -n 10\n$ cwm get -ha -f pip -ex show" 
-                },
-                { 
-                    id: "config", 
-                    name: "cwm config", 
-                    desc: "Manage tool configuration (Editors, Markers, etc).", 
-                    example: "$ cwm config --editor code\n$ cwm config show\n$ cwm config --gemini" 
-                },
-                 
-                
+                {
+                    id: "get",
+                    name: "cwm get",
+                    desc: "Retrieve saved commands, search shell history (-h), or query the copy bank database (-c). Copies results to clipboard.",
+                    example: "$ cwm get test\n$ cwm get -h -f 'git,commit'\n$ cwm get -c test"
+                }
             ]
         },
         {
-            id: "utils",
-            title: "Utilities",
+            id: "admin",
+            title: "Database & Configuration",
             commands: [
-                { 
-                    id: "ask", 
-                    name: "cwm ask", 
-                    desc: "Ask AI for command help (Gemini, OpenAI, Local).", 
-                    example: "$ cwm ask gemini -s 'how do I undo git commit?'\n$ cwm ask "
+                {
+                    id: "clear",
+                    name: "cwm clear",
+                    desc: "Wipe saved commands (-s) or path-specific history logs (-a <dir>). Syncs immediately with the copy bank.",
+                    example: "$ cwm clear -s\n$ cwm clear -a ."
                 },
-                { 
-                    id: "git", 
-                    name: "cwm git", 
-                    desc: "Manage GitHub accounts & SSH keys.", 
-                    example: "$ cwm git add\n$ cwm git setup" 
+                {
+                    id: "watch",
+                    name: "cwm watch",
+                    desc: "Start/stop real-time command logging hook in the current shell.",
+                    example: "$ cwm watch start\n$ cwm watch stop\n$ cwm watch status"
                 },
-                { 
-                    id: "copy", 
-                    name: "cwm copy", 
-                    desc: "Copy file contents or file trees to clipboard (Context Packer).", 
-                    example: "$ cwm copy --format\n$ cwm copy --tree\n$ cwm copy --condense" 
+                {
+                    id: "bank",
+                    name: "cwm bank",
+                    desc: "Inspect database locations, view sizes, or delete storage banks (mirrors deletion to the copy bank).",
+                    example: "$ cwm bank info\n$ cwm bank delete --global"
                 },
-                
-                
-                { 
-                    id: "clear", 
-                    name: "cwm clear", 
-                    desc: "Clear history, cache, or saved data.", 
-                    example: "$ cwm clear --sys-hist\n$ cwm clear --all" 
-                },
-               
-                
+                {
+                    id: "config",
+                    name: "cwm config",
+                    desc: "Set copy bank path (-c), set custom history file path (--change-history-file), or reset all configs.",
+                    example: "$ cwm config -c /mnt/nfs/cwm.db\n$ cwm config --change-history-file ~/.zsh_history\n$ cwm config --clear"
+                }
             ]
         }
     ]
