@@ -272,6 +272,21 @@
                                 </svg>
                             </button>
                         </div>
+                        <p class="tab-desc-sub"><strong>Headless / SSH Clipboard Setup</strong> (OSC 52 script for remote servers):</p>
+                        <div class="install-box sub-box">
+                            <span class="prompt">$</span>
+                            <span id="install-linux-osc52" class="cmd-text">sudo apt remove -y xclip 2&gt;/dev/null; printf '#!/bin/bash\ninput=$(cat)\nb64=$(printf "%%s" "$input" | base64 | tr -d "\\n")\nprintf "\\033]52;c;%%s\\007" "$b64" &gt; /dev/tty\n' | sudo tee /usr/local/bin/xclip &gt;/dev/null &amp;&amp; sudo chmod +x /usr/local/bin/xclip</span>
+                            <button class="copy-btn" onclick="copyCustomCmd(this, 'install-linux-osc52')"
+                                aria-label="Copy Command">
+                                <span class="btn-text">Copy</span>
+                                <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
 
                     <div id="install-macos" class="install-tab-content">
