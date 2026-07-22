@@ -1,18 +1,5 @@
 /* term_data.js - The scenarios to play */
 export const termData = [
-    // --- 1. INSTALLATION & INFO ---
-    {
-        title: "Download & Install CWM",
-        desc: "Install the standalone compiled Go binary on your system.",
-        command: "cwm hello",
-        output: `
-<span class="term-success">CWM v2.0</span>
-<span class="term-blue-bold">System:</span>  windows amd64
-<span class="term-blue-bold">History:</span> C:/Users/ismail/AppData/Roaming/Microsoft/Windows/PowerShell/PSReadLine/ConsoleHost_history.txt
-
-<span class="term-dim">CWM is initialized and ready.</span>
-        `
-    },
 
     // --- 2. VAULT SAVE ---
     {

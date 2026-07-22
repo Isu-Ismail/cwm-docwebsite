@@ -4,8 +4,7 @@ const cwmData = {
         fullName: "Command Watch Manager",
         version: "v1.0.0", // Updated to Go version
         package: "cwm-cli-go",
-        installCommand: "cwm setup",
-        description: "A lightning-fast, zero-dependency Go CLI utility to vault commands, track shell history, and sync databases.",
+        description: "A lightning-fast, zero-dependency Go CLI utility to vault commands, track shell history, and access your favorite commands in your fingertips.",
         old_versions: []
     },
     alerts: [
