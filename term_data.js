@@ -46,7 +46,7 @@ export const termData = [
 
 <span class="term-dim">---</span>
 Copy (ID): 1
-<span class="term-success">✔ Copied command #1 -> git commit -m "feat: setup GoReleaser"</span>
+<span class="term-success">Copied command #1 -> git commit -m "feat: setup GoReleaser"</span>
         `
     },
 
@@ -58,7 +58,24 @@ Copy (ID): 1
         output: `
 <span class="term-success">Set copy bank path: Z:/Shared/cwm.db</span>
 <span class="term-dim">Performing initial two-way SQL merge...</span>
-<span class="term-success">✔ Synchronization complete! Merged 15 variables, 342 history entries.</span>
+<span class="term-success">Synchronization complete! Merged 15 variables, 342 history entries.</span>
+        `
+    },
+
+    // --- 7. KILL PORT ---
+    {
+        title: "Port Inspection & Kill",
+        desc: "Inspect processes holding a network port and terminate them safely.",
+        command: "cwm kp 8080",
+        output: `
+<span class="term-accent">Found process holding port 8080:</span>
+  • PID:        48201
+  • Process:    node.exe
+  • Directory:  C:\\Users\\ismail\\projects\\my-api
+  • Command:    node server.js --env=local
+
+Kill process on port 8080? (y/N): y
+<span class="term-success">Process 48201 (node.exe) killed successfully.</span>
         `
     }
 ];

@@ -1,0 +1,84 @@
+[[technique]]
+name = "tree-copy"
+description = "Generates a visual ASCII directory tree, respecting .gitignore/.ignore rules, and copies output to clipboard."
+tags = ["util", "file"]
+
+[technique.systems]
+windows = '''cwm save -t util -t file -d "Generates visual ASCII directory tree to clipboard" tree-copy "& { `$root = (Get-Location).Path; `$rules = @('*.git*', '.git\*'); foreach (`$f in @('.gitignore', '.ignore')) { `$p = Join-Path `$root `$f; if (Test-Path `$p) { `$rules += Get-Content `$p | Where-Object { `$_ -match '\S' -and !`$_.StartsWith('#') } | ForEach-Object { `$clean = `$_ -replace '^/','' -replace '/+$',''; `"`$clean`", `"`$clean\*`", `"*`$clean`", `"*`$clean\*`" } } }; Split-Path `$root -Leaf; Get-ChildItem -Recurse | Where-Object { `$rel = `$_.FullName.Substring(`$root.Length + 1); `$skip = `$false; foreach (`$r in `$rules) { if (`$rel -like `$r) { `$skip = `$true; break } }; !`$skip } | Sort-Object FullName | ForEach-Object { `$rel = `$_.FullName.Substring(`$root.Length + 1); `$parts = `$rel -split '[/\\]'; `$indent = '|   ' * (`$parts.Count - 1); `$icon = if (`$_.PSIsContainer) { '[DIR]  ' } else { '[FILE] ' }; `$name = `$_.Name; Write-Output `"`$indent|-- `$icon`$name`" } } | Set-Clipboard; Write-Host 'Visual tree copied to clipboard!' -ForegroundColor Green"'''
+linux = '''cwm save -t util -t file -d "Generates visual ASCII directory tree to clipboard" tree-copy "bash -c 'basename \"$PWD\"; git ls-files --cached --others --exclude-standard | sort | while read -r file; do depth=$(tr -dc \"/\" <<< \"$file\" | wc -c); indent=$(printf \"|   %.0s\" $(seq 1 $depth)); name=$(basename \"$file\"); if [ -d \"$file\" ]; then icon=\"[DIR]  \"; else icon=\"[FILE] \"; fi; echo \"${indent}|-- ${icon}${name}\"; done | xclip -selection clipboard; echo -e \"\033[0;32mVisual tree copied to clipboard\033[0m\"'"'''
+mac = '''cwm save -t util -t file -d "Generates visual ASCII directory tree to clipboard" tree-copy "zsh -c 'basename \"$PWD\"; git ls-files --cached --others --exclude-standard | sort | while read -r file; do depth=$(tr -dc \"/\" <<< \"$file\" | wc -c); indent=$(printf \"|   %.0s\" $(seq 1 $depth)); name=$(basename \"$file\"); if [ -d \"$file\" ]; then icon=\"[DIR]  \"; else icon=\"[FILE] \"; fi; echo \"${indent}|-- ${icon}${name}\"; done | pbcopy; echo -e \"\033[0;32mVisual tree copied to clipboard\033[0m\"'"'''
+
+[technique.scripts]
+windows = '''param([string]$Path = ".")
+$rootPath = (Resolve-Path $Path).Path.TrimEnd('\')
+$rules = @('*.git*', '.git\*')
+foreach ($f in @('.gitignore', '.ignore')) {
+    $p = Join-Path $rootPath $f
+    if (Test-Path $p) {
+        $rules += Get-Content $p | Where-Object { $_ -match '\S' -and !$_.StartsWith('#') } | ForEach-Object {
+            $clean = $_ -replace '^/','' -replace '/+$',''
+            "$clean", "$clean\*", "*\$clean", "*\$clean\*"
+        }
+    }
+}
+$pipe       = [string][char]0x2502 + '   '
+$branch     = [string][char]0x251C + ([string][char]0x2500 * 2) + ' '
+$folderIcon = [char]::ConvertFromUtf32(0x1F4C1) + ' '
+$fileIcon   = [char]::ConvertFromUtf32(0x1F4C4) + ' '
+$output = @()
+$output += Split-Path $rootPath -Leaf
+function Get-TreeNodes ($currentDir, $depth) {
+    $items = Get-ChildItem -Path $currentDir -ErrorAction SilentlyContinue | Where-Object {
+        $rel = $_.FullName.Substring($rootPath.Length + 1)
+        $skip = $false
+        foreach ($r in $rules) { if ($rel -like $r) { $skip = $true; break } }
+        !$skip
+    } | Sort-Object @{Expression={!$_.PSIsContainer}}, @{Expression={$_.Name}}
+    foreach ($item in $items) {
+        $indent = $pipe * $depth
+        $icon = if ($item.PSIsContainer) { $folderIcon } else { $fileIcon }
+        $script:output += "$indent$branch$icon$($item.Name)"
+        if ($item.PSIsContainer) { Get-TreeNodes -currentDir $item.FullName -depth ($depth + 1) }
+    }
+}
+Get-TreeNodes -currentDir $rootPath -depth 0
+$output | Set-Clipboard
+Write-Host "Visual tree for '$rootPath' copied to clipboard!" -ForegroundColor Green'''
+
+[[technique]]
+name = "git-setup"
+description = "Generates new SSH key, adds to ssh-agent, configures git user/email, and prints pub key."
+tags = ["git", "ssh"]
+
+[technique.systems]
+windows = '''cwm save -t git -t ssh -d "Generates new SSH key, adds to ssh-agent, configures git user/email, and prints pub key" git-setup "ssh-keygen -t ed25519 -C '%email%' -f ~/.ssh/id_ed25519_%key_name% && Get-Service ssh-agent | Set-Service -StartupType Automatic && Start-Service ssh-agent && ssh-add ~/.ssh/id_ed25519_%key_name% && git config --global --replace-all user.name '%username%' && git config --global --replace-all user.email '%email%' && Write-Host '`n--- COPY THE PUBLIC KEY BELOW TO GITHUB ---`n' -ForegroundColor Green && Get-Content ~/.ssh/id_ed25519_%key_name%.pub"'''
+linux = '''cwm save -t git -t ssh -d "Generates new SSH key, adds to ssh-agent, configures git user/email, and prints pub key" git-setup "ssh-keygen -t ed25519 -C '%email%' -f ~/.ssh/id_ed25519_%key_name% && eval $(ssh-agent -s) && ssh-add ~/.ssh/id_ed25519_%key_name% && git config --global --replace-all user.name '%username%' && git config --global --replace-all user.email '%email%' && echo -e '\n\033[0;32m--- COPY THE PUBLIC KEY BELOW TO GITHUB ---\033[0m\n' && cat ~/.ssh/id_ed25519_%key_name%.pub"'''
+mac = '''cwm save -t git -t ssh -d "Generates new SSH key, adds to ssh-agent, configures git user/email, and prints pub key" git-setup "ssh-keygen -t ed25519 -C '%email%' -f ~/.ssh/id_ed25519_%key_name% && eval $(ssh-agent -s) && ssh-add ~/.ssh/id_ed25519_%key_name% && git config --global --replace-all user.name '%username%' && git config --global --replace-all user.email '%email%' && echo -e '\n\033[0;32m--- COPY THE PUBLIC KEY BELOW TO GITHUB ---\033[0m\n' && cat ~/.ssh/id_ed25519_%key_name%.pub"'''
+
+[technique.scripts]
+windows = '''param(
+    [string]$email = "%email%",
+    [string]$key_name = "%key_name%",
+    [string]$username = "%username%"
+)
+
+if ([string]::IsNullOrWhiteSpace($email) -or $email -eq "%email%") { $email = Read-Host "Enter Email" }
+if ([string]::IsNullOrWhiteSpace($key_name) -or $key_name -eq "%key_name%") { $key_name = Read-Host "Enter Key Name" }
+if ([string]::IsNullOrWhiteSpace($username) -or $username -eq "%username%") { $username = Read-Host "Enter Git Username" }
+
+$keyPath = "$HOME\.ssh\id_ed25519_$key_name"
+Write-Host "Generating SSH key at $keyPath..." -ForegroundColor Cyan
+ssh-keygen -t ed25519 -C $email -f $keyPath
+
+try {
+    $svc = Get-Service -Name ssh-agent -ErrorAction SilentlyContinue
+    if ($svc -and $svc.Status -ne 'Running') { Start-Service ssh-agent -ErrorAction SilentlyContinue }
+} catch {}
+
+try { ssh-add $keyPath 2>$null } catch {}
+
+git config --global --replace-all user.name $username
+git config --global --replace-all user.email $email
+
+Write-Host "`n--- COPY THE PUBLIC KEY BELOW TO GITHUB ---`n" -ForegroundColor Green
+Get-Content "$keyPath.pub"'''

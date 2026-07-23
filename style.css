@@ -566,19 +566,56 @@ pre {
 .back-link:hover { color: var(--accent); }
 
 .doc-header { margin-bottom: 3rem; border-bottom: 1px solid var(--border); padding-bottom: 2rem; }
-.doc-header h1 { font-size: 2.5rem; color: var(--accent); margin-bottom: 1rem; line-height: 1.1; }
+.doc-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+.doc-header h1 { font-size: 2.5rem; color: var(--accent); margin: 0; line-height: 1.1; }
+
+.copy-context-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--code-bg);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.copy-context-btn:hover {
+    background: var(--accent);
+    color: var(--code-bg);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.copy-context-btn.copied {
+    background: #27c93f !important;
+    border-color: #27c93f !important;
+    color: #fff !important;
+}
 
 /* FIXED: Syntax Wrapper - Fits Text Length */
 .syntax-wrapper {
     background: var(--code-bg);
-    padding: 1.2rem;
+    padding: 0.9rem 1.2rem;
     border-radius: 8px;
     border-left: 4px solid var(--accent);
     margin-bottom: 1.5rem;
     display: inline-flex; 
     width: fit-content;
     max-width: 100%;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 2rem; 
     overflow-x: auto;
@@ -592,8 +629,11 @@ pre {
 }
 
 .copy-group {
-    display: flex; flex-direction: column; align-items: center; gap: 5px; position: relative;
-    flex-shrink: 0,;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    flex-shrink: 0;
 }
 
 .copy-icon-btn {
@@ -1080,4 +1120,76 @@ pre {
     background: var(--accent);
     color: var(--bg-body);
     border-color: var(--accent);
+}
+
+/* SEE USAGE BUTTON */
+.see-usage-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.see-usage-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* TUTORIAL CARDS & USAGE SECTION */
+.tutorial-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.tutorial-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.tutorial-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.2rem;
+}
+
+.tutorial-sublabel {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+}
+
+.tutorial-syntax {
+    margin-bottom: 0.2rem;
+}
+
+.tutorial-expect-box {
+    background: var(--code-bg);
+    border-left: 4px solid #10b981;
+    border-radius: 6px;
+    padding: 0.9rem 1.2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    white-space: pre-wrap;
+    line-height: 1.5;
 }

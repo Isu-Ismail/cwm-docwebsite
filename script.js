@@ -23,7 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // === DOCS PAGE LOGIC ===
         renderDocSidebar(); 
         loadDocContent();
-         window.addEventListener('popstate', loadDocContent);
+        window.addEventListener('popstate', loadDocContent);
+    } else if (document.getElementById('templateContainer')) {
+        // === TEMPLATES PAGE LOGIC ===
+        renderSidebar();
     }
 });
 // Function to load the SVG file and inject it
@@ -265,6 +268,18 @@ function switchArch(arch, btnElement) {
 function renderSidebar() {
     if(typeof cwmData === 'undefined') return;
     const sidebar = document.getElementById('sidebar');
+
+    const templateHeading = document.createElement('h3');
+    templateHeading.textContent = 'Templates';
+    sidebar.appendChild(templateHeading);
+
+    const templateLink = document.createElement('a');
+    templateLink.href = 'template.html';
+    templateLink.className = 'nav-link';
+    templateLink.style.color = 'var(--accent)';
+    templateLink.style.fontWeight = '600';
+    templateLink.textContent = 'CWM Templates';
+    sidebar.appendChild(templateLink);
     
     cwmData.categories.forEach(cat => {
         const h3 = document.createElement('h3');
@@ -397,6 +412,18 @@ function renderDocSidebar() {
     const urlParams = new URLSearchParams(window.location.search);
     const currentCmd = urlParams.get('cmd');
 
+    const templateHeading = document.createElement('h3');
+    templateHeading.textContent = 'Templates';
+    sidebar.appendChild(templateHeading);
+
+    const templateLink = document.createElement('a');
+    templateLink.href = 'template.html';
+    templateLink.className = 'nav-link';
+    templateLink.style.color = 'var(--accent)';
+    templateLink.style.fontWeight = '600';
+    templateLink.textContent = 'CWM Templates';
+    sidebar.appendChild(templateLink);
+
     cwmData.categories.forEach(cat => {
         const h3 = document.createElement('h3');
         h3.textContent = cat.title;
@@ -422,11 +449,41 @@ function renderDocSidebar() {
     });
 }
 
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function escapeJsString(str) {
+    if (!str) return '';
+    return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '');
+}
+
+function scrollToUsageSection() {
+    const el = document.getElementById('usage-section');
+    if (!el) return;
+
+    const contentContainer = document.querySelector('.content') || document.querySelector('main') || document.querySelector('.doc-content');
+    if (contentContainer) {
+        const targetPos = el.offsetTop - 30;
+        contentContainer.scrollTo({
+            top: targetPos,
+            behavior: 'smooth'
+        });
+    } else {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
 function loadDocContent() {
     if(typeof cwmDocs === 'undefined') return; 
     const container = document.getElementById('doc-render-area');
     const urlParams = new URLSearchParams(window.location.search);
-    const cmdId = urlParams.get('cmd');
+    let cmdId = urlParams.get('cmd');
+    
+    if (!cmdId || !cwmDocs[cmdId]) {
+        cmdId = 'save';
+    }
     
     // Animation reset
     container.classList.remove('fade-in');
@@ -470,9 +527,67 @@ function loadDocContent() {
         </div>`;
     }
 
+    let usageSectionHtml = '';
+    if (details.usage && details.usage.length > 0) {
+        let cardsHtml = '';
+        details.usage.forEach((item, idx) => {
+            const escapedCmd = escapeJsString(item.cmd);
+            cardsHtml += `
+                <div class="tutorial-card">
+                    <div class="tutorial-title">${idx + 1}. ${item.title}</div>
+                    
+                    <div class="tutorial-sublabel">Command (What to run)</div>
+                    <div class="syntax-wrapper tutorial-syntax">
+                        <div class="syntax-text">$ ${escapeHtml(item.cmd)}</div>
+                        <div class="copy-group">
+                            <button class="copy-icon-btn" onclick="copyDocSyntax('${escapedCmd}', this)" aria-label="Copy command">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                            <span class="copy-status"></span>
+                        </div>
+                    </div>
+
+                    <div class="tutorial-sublabel">Expected Result (What to expect)</div>
+                    <div class="tutorial-expect-box">${escapeHtml(item.expect)}</div>
+                </div>
+            `;
+        });
+
+        usageSectionHtml = `
+            <div class="doc-section" id="usage-section">
+                <h4>Usage & Tutorials</h4>
+                <div class="tutorial-list">
+                    ${cardsHtml}
+                </div>
+            </div>
+        `;
+    }
+
     container.innerHTML = `
         <div class="doc-header">
-            <h1>${details.title}</h1>
+            <div class="doc-header-top">
+                <h1>${details.title}</h1>
+                <div style="display: flex; gap: 0.6rem; align-items: center;">
+                    <button class="see-usage-btn" onclick="scrollToUsageSection()" aria-label="See usage tutorials">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                            <polyline points="2 17 12 22 22 17"></polyline>
+                            <polyline points="2 12 12 17 22 12"></polyline>
+                        </svg>
+                        <span>See Usage</span>
+                    </button>
+                    <button class="copy-context-btn" onclick="copyFullDocContext('${cmdId}', this)" aria-label="Copy page content">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        <span>Copy Page</span>
+                    </button>
+                </div>
+            </div>
             
             <div class="syntax-wrapper">
                 <div class="syntax-text">$ ${details.syntax}</div>
@@ -497,18 +612,96 @@ function loadDocContent() {
 
         ${subcommandsHtml}
         ${flagsHtml}
+        ${usageSectionHtml}
     `;
 }
-function copyDocSyntax(text, btnElement) {
-    navigator.clipboard.writeText(text).then(() => {
-        const statusSpan = btnElement.nextElementSibling;
-        statusSpan.textContent = "Copied!";
-        statusSpan.classList.add('visible');
+
+function copyFullDocContext(cmdId, btnElement) {
+    const details = cwmDocs[cmdId];
+    if (!details) return;
+
+    let text = `CWM COMMAND: ${details.title.toUpperCase()}\n`;
+    text += `${'='.repeat(70)}\n\n`;
+    text += `SYNTAX:\n  $ ${details.syntax}\n\n`;
+    text += `SUMMARY:\n  ${details.summary}\n\n`;
+
+    if (details.logic) {
+        let cleanLogic = details.logic
+            .replace(/<p>(.*?)<\/p>/gi, "$1\n\n")
+            .replace(/<ul>/gi, "")
+            .replace(/<\/ul>/gi, "\n")
+            .replace(/<li>(.*?)<\/li>/gi, "  • $1\n")
+            .replace(/<br\s*\/?>/gi, "\n")
+            .replace(/<[^>]+>/g, "");
+
+        text += `DETAILS & LOGIC:\n${cleanLogic.trim()}\n\n`;
+    }
+
+    if (details.subcommands && details.subcommands.length > 0) {
+        text += `SUBCOMMANDS:\n`;
+        details.subcommands.forEach(s => {
+            let cleanName = s.name.padEnd(24, ' ');
+            let cleanDesc = s.desc.replace(/<[^>]+>/g, "");
+            text += `  ${cleanName} ${cleanDesc}\n`;
+        });
+        text += `\n`;
+    }
+
+    if (details.flags && details.flags.length > 0) {
+        text += `FLAGS & OPTIONS:\n`;
+        details.flags.forEach(f => {
+            let cleanName = f.name.padEnd(24, ' ');
+            let cleanDesc = f.desc.replace(/<[^>]+>/g, "");
+            text += `  ${cleanName} ${cleanDesc}\n`;
+        });
+        text += `\n`;
+    }
+
+    const onSuccess = () => {
+        const span = btnElement.querySelector('span');
+        const oldText = span ? span.textContent : "Copy Page";
+        btnElement.classList.add('copied');
+        if (span) span.textContent = "Copied!";
+        
         setTimeout(() => {
-            statusSpan.classList.remove('visible');
-            setTimeout(() => { statusSpan.textContent = ""; }, 300); 
+            btnElement.classList.remove('copied');
+            if (span) span.textContent = oldText;
         }, 2000);
-    }).catch(err => console.error('Failed to copy:', err));
+    };
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text.trim())
+            .then(onSuccess)
+            .catch(() => fallbackCopyText(text.trim(), onSuccess));
+    } else {
+        fallbackCopyText(text.trim(), onSuccess);
+    }
+}
+
+function copyDocSyntax(text, btnElement) {
+    const onSuccess = () => {
+        btnElement.classList.add('copied');
+        btnElement.innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#27c93f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>`;
+        setTimeout(() => {
+            btnElement.classList.remove('copied');
+            btnElement.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>`;
+        }, 2000);
+    };
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text)
+            .then(onSuccess)
+            .catch(() => fallbackCopyText(text, onSuccess));
+    } else {
+        fallbackCopyText(text, onSuccess);
+    }
 }
 
 // HOME PAGE COPY FUNCTION (Text Button)

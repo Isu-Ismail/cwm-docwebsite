@@ -40,6 +40,12 @@ const cwmData = {
                     name: "cwm setup",
                     desc: "Auto-configures shell profiles (Bash, Zsh, PowerShell) for instant command history sync and deduplication.",
                     example: "$ cwm setup"
+                },
+                {
+                    id: "version",
+                    name: "cwm version",
+                    desc: "Displays the current CWM CLI version.",
+                    example: "$ cwm version\n$ cwm -v\n$ cwm --version"
                 }
             ]
         },
@@ -51,13 +57,19 @@ const cwmData = {
                     id: "save",
                     name: "cwm save",
                     desc: "Save commands under alias variables. Prevents accidental overwrites unless explicit edit (-e) or rename (-ev) mode is used.",
-                    example: "$ cwm save test='pytest -vv'\n$ cwm save -e test='pytest -vv --lf'\n$ cwm save -ev test test_unit"
+                    example: "$ cwm save test 'pytest -vv' -t test -d 'Run all tests with verbose output'\n$ cwm save -e test 'pytest -vv --lf' -d ''\n$ cwm save -ev test test_unit"
                 },
                 {
                     id: "get",
                     name: "cwm get",
                     desc: "Retrieve saved commands, search shell history (-h), or query the copy bank database (-c). Copies results to clipboard.",
                     example: "$ cwm get test\n$ cwm get -h -f 'git,commit'\n$ cwm get -c test"
+                },
+                {
+                    id: "kp",
+                    name: "cwm kp",
+                    desc: "Inspect and terminate processes listening on a target network port with CWD detection and safety checks.",
+                    example: "$ cwm kp 8080\n$ cwm kp 8080 -f"
                 }
             ]
         },
@@ -68,8 +80,8 @@ const cwmData = {
                 {
                     id: "clear",
                     name: "cwm clear",
-                    desc: "Wipe saved commands (-s) or path-specific history logs (-a <dir>). Syncs immediately with the copy bank.",
-                    example: "$ cwm clear -s\n$ cwm clear -a ."
+                    desc: "Interactively delete selected saved commands (e.g. 1, 3, 5), clear logs, or restore trashed commands (-r).",
+                    example: "$ cwm clear\n$ cwm clear -r\n$ cwm clear -r my_var\n$ cwm clear -n"
                 },
                 {
                     id: "watch",

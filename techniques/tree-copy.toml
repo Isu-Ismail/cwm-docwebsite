@@ -1,0 +1,166 @@
+name = "tree-copy"
+description = "Generates a visual ASCII directory tree with file icons, respecting .gitignore/.ignore rules, and copies output to clipboard."
+tags = ["util", "file"]
+
+[systems]
+windows = '''cwm save -t util -t file -d "Generates visual ASCII directory tree to clipboard" tree-copy "& { `$root = (Get-Location).Path; `$rules = @('*.git*', '.git\*'); foreach (`$f in @('.gitignore', '.ignore')) { `$p = Join-Path `$root `$f; if (Test-Path `$p) { `$rules += Get-Content `$p | Where-Object { `$_ -match '\S' -and !`$_.StartsWith('#') } | ForEach-Object { `$clean = `$_ -replace '^/','' -replace '/+$',''; `"`$clean`", `"`$clean\*`", `"*`$clean`", `"*`$clean\*`" } } }; Split-Path `$root -Leaf; Get-ChildItem -Recurse | Where-Object { `$rel = `$_.FullName.Substring(`$root.Length + 1); `$skip = `$false; foreach (`$r in `$rules) { if (`$rel -like `$r) { `$skip = `$true; break } }; !`$skip } | Sort-Object FullName | ForEach-Object { `$rel = `$_.FullName.Substring(`$root.Length + 1); `$parts = `$rel -split '[/\\]'; `$indent = '|   ' * (`$parts.Count - 1); `$icon = if (`$_.PSIsContainer) { '[DIR]  ' } else { '[FILE] ' }; `$name = `$_.Name; Write-Output `"`$indent|-- `$icon`$name`" } } | Set-Clipboard; Write-Host 'Visual tree copied to clipboard!' -ForegroundColor Green"'''
+linux = '''cwm save -t util -t file -d "Generates visual ASCII directory tree to clipboard" tree-copy "bash -c 'basename \"$PWD\"; git ls-files --cached --others --exclude-standard | sort | while read -r file; do depth=$(tr -dc \"/\" <<< \"$file\" | wc -c); indent=$(printf \"|   %.0s\" $(seq 1 $depth)); name=$(basename \"$file\"); if [ -d \"$file\" ]; then icon=\"[DIR]  \"; else icon=\"[FILE] \"; fi; echo \"${indent}|-- ${icon}${name}\"; done | xclip -selection clipboard; echo -e \"\033[0;32mVisual tree copied to clipboard\033[0m\"'"'''
+mac = '''cwm save -t util -t file -d "Generates visual ASCII directory tree to clipboard" tree-copy "zsh -c 'basename \"$PWD\"; git ls-files --cached --others --exclude-standard | sort | while read -r file; do depth=$(tr -dc \"/\" <<< \"$file\" | wc -c); indent=$(printf \"|   %.0s\" $(seq 1 $depth)); name=$(basename \"$file\"); if [ -d \"$file\" ]; then icon=\"[DIR]  \"; else icon=\"[FILE] \"; fi; echo \"${indent}|-- ${icon}${name}\"; done | pbcopy; echo -e \"\033[0;32mVisual tree copied to clipboard\033[0m\"'"'''
+
+[scripts]
+windows = '''param([string]$Path = ".")
+$rootPath = (Resolve-Path $Path).Path.TrimEnd('\')
+$rules = @('*.git*', '.git\*')
+foreach ($f in @('.gitignore', '.ignore')) {
+    $p = Join-Path $rootPath $f
+    if (Test-Path $p) {
+        $rules += Get-Content $p | Where-Object { $_ -match '\S' -and !$_.StartsWith('#') } | ForEach-Object {
+            $clean = $_ -replace '^/','' -replace '/+$',''
+            "$clean", "$clean\*", "*\$clean", "*\$clean\*"
+        }
+    }
+}
+$pipe       = [string][char]0x2502 + '   '
+$branch     = [string][char]0x251C + ([string][char]0x2500 * 2) + ' '
+$folderIcon = [char]::ConvertFromUtf32(0x1F4C1) + ' '
+$fileIcon   = [char]::ConvertFromUtf32(0x1F4C4) + ' '
+$output = @()
+$output += Split-Path $rootPath -Leaf
+function Get-TreeNodes ($currentDir, $depth) {
+    $items = Get-ChildItem -Path $currentDir -ErrorAction SilentlyContinue | Where-Object {
+        $rel = $_.FullName.Substring($rootPath.Length + 1)
+        $skip = $false
+        foreach ($r in $rules) { if ($rel -like $r) { $skip = $true; break } }
+        !$skip
+    } | Sort-Object @{Expression={!$_.PSIsContainer}}, @{Expression={$_.Name}}
+    foreach ($item in $items) {
+        $indent = $pipe * $depth
+        $icon = if ($item.PSIsContainer) { $folderIcon } else { $fileIcon }
+        $script:output += "$indent$branch$icon$($item.Name)"
+        if ($item.PSIsContainer) { Get-TreeNodes -currentDir $item.FullName -depth ($depth + 1) }
+    }
+}
+Get-TreeNodes -currentDir $rootPath -depth 0
+$output | Set-Clipboard
+Write-Host "Visual tree for '$rootPath' copied to clipboard!" -ForegroundColor Green'''
+linux = '''#!/bin/bash
+ROOT_DIR="${1:-.}"
+ROOT_DIR="$(cd "$ROOT_DIR" && pwd)"
+ROOT_NAME="$(basename "$ROOT_DIR")"
+
+PIPE="│   "
+BRANCH="├── "
+FOLDER_ICON="📁 "
+FILE_ICON="📄 "
+
+OUTPUT="$ROOT_NAME\n"
+
+build_tree() {
+    local dir="$1"
+    local depth="$2"
+
+    local entries=()
+    if command -v git &>/dev/null && git -C "$dir" rev-parse --is-inside-work-tree &>/dev/null; then
+        while IFS= read -r file; do
+            [ -n "$file" ] && entries+=("$file")
+        done < <(git -C "$dir" ls-files --cached --others --exclude-standard "$dir" | awk -F/ '{print $1}' | sort -u)
+    else
+        while IFS= read -r -d '' item; do
+            local name="$(basename "$item")"
+            [[ "$name" =~ ^(\.git|\.ignore|\.gitignore)$ ]] && continue
+            entries+=("$name")
+        done < <(find "$dir" -maxdepth 1 -mindepth 1 -print0 | sort -z)
+    fi
+
+    local dirs=()
+    local files=()
+    for entry in "${entries[@]}"; do
+        local full_path="$dir/$entry"
+        if [ -d "$full_path" ]; then
+            dirs+=("$entry")
+        else
+            files+=("$entry")
+        fi
+    done
+
+    local indent=""
+    for ((i=0; i<depth; i++)); do indent="${indent}${PIPE}"; done
+
+    for d in "${dirs[@]}"; do
+        OUTPUT="${OUTPUT}${indent}${BRANCH}${FOLDER_ICON}${d}\n"
+        build_tree "$dir/$d" $((depth + 1))
+    done
+
+    for f in "${files[@]}"; do
+        OUTPUT="${OUTPUT}${indent}${BRANCH}${FILE_ICON}${f}\n"
+    done
+}
+
+build_tree "$ROOT_DIR" 0
+
+if command -v xclip &>/dev/null; then
+    echo -e "$OUTPUT" | xclip -selection clipboard
+    echo -e "\033[0;32mVisual tree copied to clipboard (xclip)!\033[0m"
+elif command -v xsel &>/dev/null; then
+    echo -e "$OUTPUT" | xsel --clipboard
+    echo -e "\033[0;32mVisual tree copied to clipboard (xsel)!\033[0m"
+else
+    echo -e "$OUTPUT"
+    echo -e "\033[0;33mNotice: Install xclip/xsel to auto-copy tree to clipboard.\033[0m"
+fi'''
+mac = '''#!/bin/zsh
+ROOT_DIR="${1:-.}"
+ROOT_DIR="$(cd "$ROOT_DIR" && pwd)"
+ROOT_NAME="$(basename "$ROOT_DIR")"
+
+PIPE="│   "
+BRANCH="├── "
+FOLDER_ICON="📁 "
+FILE_ICON="📄 "
+
+OUTPUT="$ROOT_NAME\n"
+
+build_tree() {
+    local dir="$1"
+    local depth="$2"
+
+    local entries=()
+    if command -v git &>/dev/null && git -C "$dir" rev-parse --is-inside-work-tree &>/dev/null; then
+        entries=(${(f)"$(git -C "$dir" ls-files --cached --others --exclude-standard "$dir" | awk -F/ '{print $1}' | sort -u)"})
+    else
+        for item in "$dir"/*(D); do
+            local name="$(basename "$item")"
+            [[ "$name" =~ ^(\.git|\.ignore|\.gitignore)$ ]] && continue
+            entries+=("$name")
+        done
+    fi
+
+    local dirs=()
+    local files=()
+    for entry in "${entries[@]}"; do
+        [ -z "$entry" ] && continue
+        local full_path="$dir/$entry"
+        if [ -d "$full_path" ]; then
+            dirs+=("$entry")
+        else
+            files+=("$entry")
+        fi
+    done
+
+    local indent=""
+    for ((i=0; i<depth; i++)); do indent="${indent}${PIPE}"; done
+
+    for d in "${dirs[@]}"; do
+        OUTPUT="${OUTPUT}${indent}${BRANCH}${FOLDER_ICON}${d}\n"
+        build_tree "$dir/$d" $((depth + 1))
+    done
+
+    for f in "${files[@]}"; do
+        OUTPUT="${OUTPUT}${indent}${BRANCH}${FILE_ICON}${f}\n"
+    done
+}
+
+build_tree "$ROOT_DIR" 0
+
+echo -e "$OUTPUT" | pbcopy
+echo -e "\033[0;32mVisual tree copied to clipboard (pbcopy)!\033[0m"'''

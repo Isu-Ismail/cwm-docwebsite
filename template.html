@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CWM Templates & Techniques</title>
+
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="fonts.css">
+
+    <style>
+        .templates-header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1.5rem;
+        }
+
+        .templates-header h1 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .templates-header p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .os-selector-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .os-btn {
+            background: var(--code-bg);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            padding: 0.55rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .os-btn:hover {
+            border-color: var(--accent);
+            color: var(--text-primary);
+        }
+
+        .os-btn.active {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+        }
+
+        .template-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.75rem;
+            margin-bottom: 3rem;
+        }
+
+        .template-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .template-card:hover {
+            border-color: var(--accent);
+        }
+
+        .template-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .template-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .template-tags {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .template-tag {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+
+        .template-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        /* Mode Selector Tabs */
+        .mode-toggle-bar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.4rem;
+        }
+
+        .mode-btn {
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.3rem 0.7rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .mode-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .mode-btn.active {
+            background: var(--code-bg);
+            color: var(--accent);
+            border: 1px solid var(--border);
+        }
+
+        /* Script Initialization Command Box */
+        .script-init-box {
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px dashed var(--accent);
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .script-init-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            word-break: break-all;
+        }
+
+        .script-init-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.2rem;
+            letter-spacing: 0.5px;
+        }
+
+        .syntax-wrapper.template-syntax {
+            width: 100%;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 0;
+            box-sizing: border-box;
+            gap: 1rem;
+            background: var(--code-bg);
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .syntax-text.template-cmd {
+            flex: 1 1 0%;
+            min-width: 0;
+            font-size: 0.88rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+            line-height: 1.5;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Button tick state animation styling */
+        .copy-icon-btn.copied {
+            color: #10b981 !important;
+            border-color: #10b981 !important;
+        }
+
+        @media (max-width: 768px) {
+            .os-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+
+    <script>
+        (function () {
+            const themes = ['dark', 'light', 'retro', 'forest', 'cyberpunk', 'github-classic'];
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } else {
+                const randomTheme = themes[Math.floor(Math.random() * themes.length)];
+                document.documentElement.setAttribute('data-theme', randomTheme);
+                localStorage.setItem('theme', randomTheme);
+            }
+        })();
+    </script>
+</head>
+
+<body>
+
+    <nav class="navbar" id="mainNavbar">
+        <div class="nav-left">
+            <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Toggle Menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+
+            <div class="logo">
+                <a href="index.html"
+                    style="text-decoration:none; color:inherit; display: flex; align-items: center; gap: 10px;">
+                    <svg class="logo-icon" viewBox="0 0 314 309" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M292.643 150.501C292.643 213.287 241.745 264.186 178.959 264.186C116.173 264.186 65.2744 213.287 65.2744 150.501C65.2744 87.7153 116.173 36.8172 178.959 36.8172C241.745 36.8172 292.643 87.7154 292.643 150.501Z"
+                            fill="var(--bg-sidebar)" style="transition: fill 0.3s ease;" />
+
+                        <circle cx="243.959" cy="121.501" r="20" fill="var(--accent)"
+                            style="transition: fill 0.3s ease;" />
+
+                        <g filter="url(#filter0_d_0_1)">
+                            <path
+                                d="M197.459 25.0014L29.3968 152.099C28.861 152.505 28.8692 153.312 29.4132 153.707L197.459 275.501"
+                                stroke="var(--accent)" stroke-width="50" stroke-linecap="round"
+                                style="transition: stroke 0.3s ease;" />
+                        </g>
+
+                        <path d="M192.959 176.501C212.875 176.111 224.042 175.892 243.959 175.501"
+                            stroke="var(--accent)" stroke-width="40" stroke-linecap="round"
+                            style="transition: stroke 0.3s ease;" />
+
+                        <circle cx="192.959" cy="121.501" r="20" fill="var(--accent)"
+                            style="transition: fill 0.3s ease;" />
+
+                        <defs>
+                            <filter id="filter0_d_0_1" x="0" y="0" width="226.46" height="308.503"
+                                filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                                <feColorMatrix in="SourceAlpha" type="matrix"
+                                    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                                <feOffset dy="4" />
+                                <feGaussianBlur stdDeviation="2" />
+                                <feComposite in2="hardAlpha" operator="out" />
+                                <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+                                <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0_1" />
+                                <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0_1" result="shape" />
+                            </filter>
+                        </defs>
+                    </svg>
+                    <div id="logo-container"></div>
+                    <span>CWM <span class="badge">CLI</span></span>
+                </a>
+            </div>
+        </div>
+
+        <div class="nav-controls">
+            <a href="index.html" class="back-link">← <span class="back-text">Back</span></a>
+
+            <a href="https://github.com/Isu-Ismail/cwm" target="_blank" class="github-btn" aria-label="Visit GitHub">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                    </path>
+                </svg>
+            </a>
+
+            <button id="themeToggle" class="theme-btn">☀/☾</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div id="mobileOverlay" class="mobile-overlay"></div>
+
+        <aside class="sidebar" id="sidebar">
+            <!-- Dynamically populated by renderSidebar() -->
+        </aside>
+
+        <main class="content doc-content">
+            <div class="templates-header">
+                <h1>CWM Techniques & Templates</h1>
+                <p>Ready-to-use CWM commands optimized for your operating system shell environment, leveraging built-in
+                    shell scripts.</p>
+
+                <div class="os-selector-bar">
+                    <button class="os-btn active" data-os="windows">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M0 3.449L9.75 2.1v9.451H0m10.95-9.6L24 0v11.4H10.95M0 12.6h9.75v9.451L0 20.699M10.95 12.6H24V24l-13.05-1.8" />
+                        </svg>
+                        Windows (PowerShell)
+                    </button>
+                    <button class="os-btn" data-os="linux">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z" />
+                        </svg>
+                        Linux (Bash)
+                    </button>
+                    <button class="os-btn" data-os="mac">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.09c.66-.8 1.11-1.92.99-3.04-.96.04-2.13.64-2.82 1.44-.61.71-1.14 1.86-1 2.97 1.07.08 2.17-.57 2.83-1.37z" />
+                        </svg>
+                        macOS (Zsh)
+                    </button>
+                </div>
+            </div>
+
+            <div id="templateContainer" class="template-grid">
+                <!-- Dynamically populated -->
+            </div>
+        </main>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+    <script>
+        let selectedOS = 'windows';
+        let techniques = [];
+        let viewModes = {}; // Map of technique name -> 'command' | 'script'
+
+        const SVG_COPY = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+        const SVG_TICK = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
+        const platform = navigator.platform.toLowerCase();
+        if (platform.includes('mac')) selectedOS = 'mac';
+        else if (platform.includes('linux')) selectedOS = 'linux';
+
+        async function loadTechniques() {
+            techniques = [];
+            try {
+                const indexResp = await fetch('techniques/index.json');
+                if (indexResp.ok) {
+                    const fileList = await indexResp.json();
+                    for (const item of fileList) {
+                        const fileName = item.endsWith('.toml') ? item : `${item}.toml`;
+                        try {
+                            const tomlResp = await fetch(`techniques/${fileName}`);
+                            if (tomlResp.ok) {
+                                const tomlText = await tomlResp.text();
+                                const parsed = parseTOML(tomlText);
+                                techniques.push(...parsed);
+                            }
+                        } catch (e) {}
+                    }
+                }
+            } catch (e) {}
+
+            if (techniques.length === 0) {
+                try {
+                    const response = await fetch('technique.toml');
+                    if (response.ok) {
+                        const text = await response.text();
+                        techniques = parseTOML(text);
+                    } else {
+                        const jsonResp = await fetch('technique.json');
+                        techniques = await jsonResp.json();
+                    }
+                } catch (err) {
+                    try {
+                        const jsonResp = await fetch('technique.json');
+                        techniques = await jsonResp.json();
+                    } catch (jsonErr) {}
+                }
+            }
+
+            renderTechniques();
+        }
+
+        function parseTOML(text) {
+            const list = [];
+            let current = null;
+            let currentSec = 'root';
+            let multilineKey = null;
+            let multilineBuf = [];
+            let inMultiline = false;
+
+            const lines = text.split(/\r?\n/);
+
+            const hasArrayHeader = lines.some(l => l.trim().startsWith('[[technique]]'));
+            if (!hasArrayHeader) {
+                current = { name: '', description: '', tags: [], systems: {}, scripts: {} };
+                list.push(current);
+            }
+
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i];
+
+                if (inMultiline) {
+                    if (line.trim().endsWith("'''")) {
+                        let content = line.substring(0, line.lastIndexOf("'''"));
+                        multilineBuf.push(content);
+                        if (current) {
+                            if (currentSec === 'systems') {
+                                current.systems = current.systems || {};
+                                current.systems[multilineKey] = multilineBuf.join('\n');
+                            } else if (currentSec === 'scripts') {
+                                current.scripts = current.scripts || {};
+                                current.scripts[multilineKey] = multilineBuf.join('\n');
+                            }
+                        }
+                        inMultiline = false;
+                        multilineKey = null;
+                        multilineBuf = [];
+                    } else {
+                        multilineBuf.push(line);
+                    }
+                    continue;
+                }
+
+                let trimmed = line.trim();
+                if (!trimmed || trimmed.startsWith('#')) continue;
+
+                if (trimmed === '[[technique]]') {
+                    current = { name: '', description: '', tags: [], systems: {}, scripts: {} };
+                    list.push(current);
+                    currentSec = 'root';
+                    continue;
+                }
+
+                if (trimmed === '[technique.systems]' || trimmed === '[systems]') { currentSec = 'systems'; continue; }
+                if (trimmed === '[technique.scripts]' || trimmed === '[scripts]') { currentSec = 'scripts'; continue; }
+
+                let eqIdx = trimmed.indexOf('=');
+                if (eqIdx !== -1) {
+                    let key = trimmed.substring(0, eqIdx).trim();
+                    let val = trimmed.substring(eqIdx + 1).trim();
+
+                    if (val.startsWith("'''")) {
+                        let rest = val.substring(3);
+                        if (rest.endsWith("'''") && rest.length >= 3) {
+                            let strVal = rest.substring(0, rest.length - 3);
+                            if (current) {
+                                if (currentSec === 'systems') {
+                                    current.systems = current.systems || {};
+                                    current.systems[key] = strVal;
+                                } else if (currentSec === 'scripts') {
+                                    current.scripts = current.scripts || {};
+                                    current.scripts[key] = strVal;
+                                }
+                            }
+                        } else {
+                            inMultiline = true;
+                            multilineKey = key;
+                            multilineBuf = [rest];
+                        }
+                    } else if (val.startsWith('"') && val.endsWith('"')) {
+                        let strVal = val.substring(1, val.length - 1);
+                        if (current) {
+                            if (currentSec === 'root') current[key] = strVal;
+                            else if (currentSec === 'systems') {
+                                current.systems = current.systems || {};
+                                current.systems[key] = strVal;
+                            } else if (currentSec === 'scripts') {
+                                current.scripts = current.scripts || {};
+                                current.scripts[key] = strVal;
+                            }
+                        }
+                    } else if (val.startsWith('[') && val.endsWith(']')) {
+                        try {
+                            let arr = JSON.parse(val);
+                            if (current && currentSec === 'root') current[key] = arr;
+                        } catch (e) { }
+                    }
+                }
+            }
+            return list;
+        }
+
+        function buildScriptSaveCmd(item) {
+            const tagFlags = item.tags && item.tags.length ? item.tags.map(t => `-t ${t}`).join(' ') + ' ' : '';
+            return `cwm save -s ${tagFlags}-d "${item.description}" ${item.name}`;
+        }
+
+        function renderTechniques() {
+            const container = document.getElementById('templateContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            document.querySelectorAll('.os-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.os === selectedOS);
+            });
+
+            techniques.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'template-card';
+
+                const hasScript = item.scripts && (item.scripts[selectedOS] || item.scripts['windows'] || item.scripts['linux'] || item.scripts['mac']);
+                const currentMode = viewModes[item.name] || 'command';
+
+                let activeText = '';
+                if (currentMode === 'script' && hasScript) {
+                    activeText = (item.scripts && item.scripts[selectedOS]) || (item.scripts && item.scripts['windows']) || '';
+                } else {
+                    activeText = (item.systems && item.systems[selectedOS]) || (item.systems && item.systems['windows']) || '';
+                }
+
+                const tagsHtml = item.tags ? item.tags.map(t => `<span class="template-tag">${t}</span>`).join('') : '';
+
+                let osLabel = 'PowerShell';
+                if (selectedOS === 'linux') osLabel = 'Bash';
+                if (selectedOS === 'mac') osLabel = 'Zsh';
+
+                let modeToggleHtml = '';
+                if (hasScript) {
+                    modeToggleHtml = `
+                        <div class="mode-toggle-bar">
+                            <button class="mode-btn ${currentMode === 'command' ? 'active' : ''}" data-mode="command">Command Mode</button>
+                            <button class="mode-btn ${currentMode === 'script' ? 'active' : ''}" data-mode="script">Script Mode (-s)</button>
+                        </div>
+                    `;
+                }
+
+                let scriptInitBoxHtml = '';
+                if (currentMode === 'script' && hasScript) {
+                    const saveCmd = buildScriptSaveCmd(item);
+                    scriptInitBoxHtml = `
+                        <div class="script-init-box">
+                            <div>
+                                <div class="script-init-label">Step 1: Create & Open Script in Editor</div>
+                                <div class="script-init-text">$ ${escapeHtml(saveCmd)}</div>
+                            </div>
+                            <div class="copy-group">
+                                <button class="copy-icon-btn copy-init-btn" aria-label="Copy command">
+                                    ${SVG_COPY}
+                                </button>
+                                <span class="copy-status"></span>
+                            </div>
+                        </div>
+                        <div class="script-init-label" style="margin-bottom:0.3rem;">Step 2: Paste Content Below into Editor</div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="template-card-header">
+                        <div class="template-title">${item.name}</div>
+                        <div class="template-tags">${tagsHtml}</div>
+                    </div>
+                    <div class="template-desc">${item.description}</div>
+
+                    ${modeToggleHtml}
+                    ${scriptInitBoxHtml}
+
+                    <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Target: ${selectedOS.toUpperCase()} (${osLabel}) ${currentMode === 'script' ? '— Standalone Script' : ''}
+                    </div>
+
+                    <div class="syntax-wrapper template-syntax">
+                        <div class="syntax-text template-cmd">${currentMode === 'command' ? '$ ' : ''}${escapeHtml(activeText)}</div>
+                        <div class="copy-group">
+                            <button class="copy-icon-btn copy-main-btn" aria-label="Copy to clipboard">
+                                ${SVG_COPY}
+                            </button>
+                            <span class="copy-status"></span>
+                        </div>
+                    </div>
+                `;
+
+                // Handle Mode Toggle Clicks
+                card.querySelectorAll('.mode-btn').forEach(mBtn => {
+                    mBtn.addEventListener('click', () => {
+                        viewModes[item.name] = mBtn.dataset.mode;
+                        renderTechniques();
+                    });
+                });
+
+                // Attach Copy Logic with Tick Feedback
+                const mainCopyBtn = card.querySelector('.copy-main-btn');
+                if (mainCopyBtn) {
+                    mainCopyBtn.addEventListener('click', () => {
+                        copyTemplateSyntax(activeText, mainCopyBtn);
+                    });
+                }
+
+                const initCopyBtn = card.querySelector('.copy-init-btn');
+                if (initCopyBtn) {
+                    initCopyBtn.addEventListener('click', () => {
+                        copyTemplateSyntax(buildScriptSaveCmd(item), initCopyBtn);
+                    });
+                }
+
+                container.appendChild(card);
+            });
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        function copyTemplateSyntax(text, btnElement) {
+            navigator.clipboard.writeText(text).then(() => {
+                btnElement.innerHTML = SVG_TICK;
+                btnElement.classList.add('copied');
+
+                const statusSpan = btnElement.nextElementSibling;
+                if (statusSpan) {
+                    statusSpan.textContent = "Copied!";
+                    statusSpan.classList.add('visible');
+                }
+
+                setTimeout(() => {
+                    btnElement.innerHTML = SVG_COPY;
+                    btnElement.classList.remove('copied');
+                    if (statusSpan) {
+                        statusSpan.classList.remove('visible');
+                        setTimeout(() => { statusSpan.textContent = ""; }, 300);
+                    }
+                }, 2000);
+            }).catch(err => {
+                console.error("Clipboard copy failed:", err);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.os-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    selectedOS = btn.dataset.os;
+                    renderTechniques();
+                });
+            });
+            loadTechniques();
+        });
+    </script>
+</body>
+
+</html>
