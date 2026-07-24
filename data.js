@@ -2,16 +2,16 @@ const cwmData = {
     projectInfo: {
         name: "CWM",
         fullName: "Command Watch Manager",
-        version: "v1.0.0", // Updated to Go version
+        version: "v2.0.0",
         package: "cwm-cli-go",
-        description: "A lightning-fast, zero-dependency Go CLI utility to vault commands, track shell history, and access your favorite commands in your fingertips.",
-        old_versions: []
+        description: "A lightning-fast, zero-dependency Go CLI utility to vault commands, track shell history, perform path-aware deduplication, and execute script automations seamlessly.",
+        old_versions: ["v1.0.0"]
     },
     alerts: [
         {
             type: "news",
-            title: "Go Migration Complete!",
-            text: "CWM has been completely rewritten in <strong>Go</strong>! Enjoy instant execution speeds, zero Python dependencies, and a robust SQLite storage backend."
+            title: "CWM v2.0.0 Release!",
+            text: "Features top-level <code>cwm tidy</code> with <strong>path-aware watch database deduplication</strong>, command exclusion filtering (<code>cwm watch start -ex cwm,python,clear</code>), interactive script management, and permanent trash purging."
         },
         {
             type: "info",
@@ -21,7 +21,7 @@ const cwmData = {
         {
             type: "warning",
             title: "History Safety Checks",
-            text: "Custom history file paths are automatically validated to ensure they are valid files containing 'history' in their names, with a safety limit of 100 words per line."
+            text: "Custom history file paths are automatically validated to ensure they are valid files containing 'history' in their names, with configurable character and word limit checks."
         }
     ],
     categories: [
@@ -32,13 +32,13 @@ const cwmData = {
                 {
                     id: "hello",
                     name: "cwm hello",
-                    desc: "Displays system diagnostics, active shell info, and history log status.",
+                    desc: "Displays system diagnostics including OS/Arch, history file location, shell hook status, direct execution (-x) status, and database schema health.",
                     example: "$ cwm hello"
                 },
                 {
                     id: "setup",
                     name: "cwm setup",
-                    desc: "Auto-configures shell profiles (Bash, Zsh, PowerShell) for instant command history sync and deduplication.",
+                    desc: "Auto-configures shell profiles (Bash, Zsh, PowerShell) for instant command history sync and native -x execution wrapper.",
                     example: "$ cwm setup"
                 },
                 {
@@ -56,14 +56,14 @@ const cwmData = {
                 {
                     id: "save",
                     name: "cwm save",
-                    desc: "Save commands under alias variables. Prevents accidental overwrites unless explicit edit (-e) or rename (-ev) mode is used.",
-                    example: "$ cwm save test 'pytest -vv' -t test -d 'Run all tests with verbose output'\n$ cwm save -e test 'pytest -vv --lf' -d ''\n$ cwm save -ev test test_unit"
+                    desc: "Save commands or external scripts (-s) under alias variables. Prevents accidental overwrites unless explicit edit (-e) or rename (-ev) mode is used.",
+                    example: "$ cwm save test 'pytest -vv' -t test -d 'Run all tests with verbose output'\n$ cwm save deploy -s ./deploy.ps1 -t release -d 'Deployment script'"
                 },
                 {
                     id: "get",
                     name: "cwm get",
-                    desc: "Retrieve saved commands, search shell history (-h), or query the copy bank database (-c). Copies results to clipboard.",
-                    example: "$ cwm get test\n$ cwm get -h -f 'git,commit'\n$ cwm get -c test"
+                    desc: "Retrieve saved commands, search shell history (-h), query copy bank (-c), or execute directly (-x) with interactive script placeholder resolution.",
+                    example: "$ cwm get test\n$ cwm get deploy -x\n$ cwm get -h -f 'git,commit'\n$ cwm get -c test"
                 },
                 {
                     id: "kp",
@@ -75,24 +75,30 @@ const cwmData = {
         },
         {
             id: "admin",
-            title: "Database & Configuration",
+            title: "Database & Optimization",
             commands: [
+                {
+                    id: "tidy",
+                    name: "cwm tidy",
+                    desc: "Deduplicate disk history file (history) or perform path-aware watch database deduplication (watch) per working directory context.",
+                    example: "$ cwm tidy\n$ cwm tidy history -c 200 -w 50\n$ cwm tidy watch"
+                },
                 {
                     id: "clear",
                     name: "cwm clear",
-                    desc: "Interactively delete selected saved commands (e.g. 1, 3, 5), clear logs, or restore trashed commands (-r).",
-                    example: "$ cwm clear\n$ cwm clear -r\n$ cwm clear -r my_var\n$ cwm clear -n"
+                    desc: "Interactively delete selected saved commands (1, 3, 5), restore trashed items (-r), or empty the trash buffer (--trash).",
+                    example: "$ cwm clear\n$ cwm clear -r\n$ cwm clear -r my_var\n$ cwm clear --trash"
                 },
                 {
                     id: "watch",
                     name: "cwm watch",
-                    desc: "Start/stop real-time command logging hook in the current shell.",
-                    example: "$ cwm watch start\n$ cwm watch stop\n$ cwm watch status"
+                    desc: "Start/stop real-time command logging hook with command exclusion list filtering (-ex).",
+                    example: "$ cwm watch start -ex cwm,python,clear\n$ cwm watch stop\n$ cwm watch status"
                 },
                 {
                     id: "bank",
                     name: "cwm bank",
-                    desc: "Inspect database locations, view sizes, or delete storage banks (mirrors deletion to the copy bank).",
+                    desc: "Inspect database locations, view storage sizes, or delete storage banks.",
                     example: "$ cwm bank info\n$ cwm bank delete --global"
                 },
                 {

@@ -2,13 +2,14 @@ const cwmDocs = {
     "hello": {
         title: "Hello (System Diagnostics)",
         syntax: "cwm hello",
-        summary: "Displays welcome message, CWM version, current OS/Architecture, active shell history path, and synchronization alerts.",
+        summary: "Displays system diagnostics, CWM version, OS/Architecture, active shell history path, shell hook status, direct execution (-x) status, and database schema health.",
         logic: `
             <p>The <code>hello</code> command is your primary tool for system diagnostics. It runs a series of quick validation checks on the running environment:</p>
             <ul>
                 <li><strong>System Info:</strong> Shows current Operating System (Windows, Linux, macOS) and architecture details.</li>
-                <li><strong>Active History File:</strong> Displays the path to the shell history file CWM is reading from. Useful if custom paths are misconfigured.</li>
-                <li><strong>Real-time Sync Alert:</strong> Notifies you if instant shell synchronization isn't configured in the environment profile.</li>
+                <li><strong>Active History File:</strong> Displays the exact path to the active shell history file.</li>
+                <li><strong>Shell Hook & Direct Execution (-x):</strong> Confirms whether instant sync and the native <code>-x</code> execution shell wrapper function are active.</li>
+                <li><strong>Database Schema Health:</strong> Validates SQLite database connectivity and schema version sync (v6).</li>
             </ul>
         `,
         flags: [],
@@ -16,7 +17,7 @@ const cwmDocs = {
             {
                 title: "Run diagnostic system check",
                 cmd: "cwm hello",
-                expect: "CWM Command Watch Manager (v1.0.0)\nOS: windows/amd64\nHistory File: C:/Users/ismail/AppData/Roaming/Microsoft/Windows/PowerShell/PSReadLine/ConsoleHost_history.txt\nShell Hook: Active (Instant Sync)"
+                expect: "CWM - Command Watch Manager (v2.0.0)\n-----------------------------------------------------------------\nOS:                  windows/amd64\nHistory File:        C:/Users/ismail/AppData/Roaming/Microsoft/Windows/PowerShell/PSReadLine/ConsoleHost_history.txt\nShell Hook:          Active (Instant Sync)\nDirect Execution:    Active (-x Native Wrapper Function Installed)\nDatabase Schema:     v6 (Healthy / Synced)"
             }
         ]
     },
@@ -34,20 +35,21 @@ const cwmDocs = {
             {
                 title: "Check current application version",
                 cmd: "cwm version",
-                expect: "cwm 1.0.0"
+                expect: "cwm v2.0.0"
             }
         ]
     },
     "setup": {
         title: "Setup (Shell Integration)",
         syntax: "cwm setup [flags]",
-        summary: "Auto-configure shell profiles (Bash, Zsh, PowerShell) for instant command history synchronization.",
+        summary: "Auto-configure shell profiles (Bash, Zsh, PowerShell) for instant command history synchronization and native -x execution wrapper.",
         logic: `
-            <p>The <code>setup</code> command is a "set-and-forget" utility that hooks into your system terminal to enable instant history recording.</p>
+            <p>The <code>setup</code> command is a "set-and-forget" utility that hooks into your system terminal to enable instant history recording and native execution capabilities.</p>
             <p><strong>What it configures:</strong></p>
             <ul>
-                <li><strong>Instant Write:</strong> Forces terminal shell sessions to append executed commands directly to your history file on disk after every single execution, instead of waiting for the session to close.</li>
-                <li><strong>Deduplication:</strong> Configures your shell profile to discard consecutive duplicate commands to prevent log bloating.</li>
+                <li><strong>Instant Sync:</strong> Forces terminal shell sessions to append executed commands directly to your history file on disk after every single execution.</li>
+                <li><strong>Native -x Wrapper:</strong> Installs the <code>cwm()</code> shell function wrapper so running <code>cwm get <name> -x</code> evaluates directly in your active shell environment.</li>
+                <li><strong>Profile Reload Copying:</strong> Automatically copies the system-aware reload command (<code>. $PROFILE</code> or <code>source ~/.bashrc</code>) directly to your clipboard.</li>
             </ul>
         `,
         flags: [
@@ -57,7 +59,7 @@ const cwmDocs = {
             {
                 title: "Auto-configure active shell profile",
                 cmd: "cwm setup",
-                expect: "Detected Windows System.\nConfiguring PowerShell (Core)...\nTarget: C:/Users/ismail/Documents/PowerShell/Microsoft.PowerShell_profile.ps1\nDone! Please restart or reload your PowerShell terminal."
+                expect: "Detected Windows System.\nConfiguring PowerShell (Core)...\nTarget: C:/Users/ismail/Documents/PowerShell/Microsoft.PowerShell_profile.ps1\nCopied reload command '. $PROFILE' to clipboard!\nPress Ctrl+V (or right-click) and Enter to activate your profile immediately."
             },
             {
                 title: "Force manual shell selection menu",
@@ -69,15 +71,19 @@ const cwmDocs = {
     "save": {
         title: "Save (Command Vault)",
         syntax: "cwm save [flags] [-t tag] [variable=command]",
-        summary: "Save shell command strings under variable names with optional tags.",
+        summary: "Save shell command strings or external standalone scripts under variable names with tags and descriptions.",
         logic: `
-            <p>The <code>save</code> command acts as a vault for complex commands. It supports saving multiple aliases at once and tags for organization.</p>
-            <p><strong>Conflict Protection:</strong></p>
-            <p>To prevent accidental overwrites, saving an already existing variable name will result in an error. You must explicitly request edit mode or rename mode.</p>
+            <p>The <code>save</code> command acts as a vault for complex commands and reusable script files.</p>
+            <p><strong>Conflict Protection & Script Features:</strong></p>
+            <ul>
+                <li><strong>Overwrite Safeguard:</strong> Saving an existing variable key throws an error unless explicit edit mode (<code>-e</code>) or rename mode (<code>-ev</code>) is requested.</li>
+                <li><strong>Script Mode (-s):</strong> Launches your preferred native editor to write/edit multiline scripts saved inside <code>~/.cwm/scripts/</code>.</li>
+            </ul>
         `,
         flags: [
             { name: "var 'cmd'", desc: "Standard format. Nickname variable to run command." },
             { name: "-d, --description <name>", desc: "<strong>Description:</strong> Assign a description to the saved command(s)." },
+            { name: "-t, --tag <tag>", desc: "<strong>Tags:</strong> Assign organizational tags to saved commands." },
             { name: "-s, --script <name>", desc: "<strong>Script Mode:</strong> Open terminal multiline code editor to write/paste custom scripts saved in <code>~/.cwm/scripts/</code>." },
             { name: "-s -e <name>", desc: "<strong>Script Edit:</strong> Open existing script content in terminal editor pre-filled for interactive editing." },
             { name: "-e, --edit <name>", desc: "<strong>Edit Mode:</strong> Force update of an already existing variable name." },
@@ -92,16 +98,11 @@ const cwmDocs = {
             {
                 title: "Create a multiline standalone script (-s)",
                 cmd: "cwm save -s -t util -d \"Visual folder tree\" tree-copy",
-                expect: "Opened script editor (notepad)... Edit and save your script file anytime!\nSaved [script, util] tree-copy = powershell -ExecutionPolicy Bypass -File \"~/.cwm/scripts/tree-copy.ps1\""
+                expect: "Opened script editor (code --wait)... Edit and save your script file anytime!\nSaved [script, util] tree-copy = powershell -ExecutionPolicy Bypass -File \"~/.cwm/scripts/tree-copy.ps1\""
             },
             {
-                title: "Edit an existing script in native editor (-s -e)",
-                cmd: "cwm save -s -e tree-copy",
-                expect: "Opened script editor (notepad)... Edit and save your script file anytime!\nUpdated [script, util] tree-copy = powershell -ExecutionPolicy Bypass -File \"~/.cwm/scripts/tree-copy.ps1\""
-            },
-            {
-                title: "Rename an existing variable key (-ev / -r)",
-                cmd: "cwm save -r old_name new_name",
+                title: "Rename an existing variable key (-ev)",
+                cmd: "cwm save -ev old_name new_name",
                 expect: "Renamed variable old_name -> new_name"
             }
         ]
@@ -109,11 +110,13 @@ const cwmDocs = {
     "get": {
         title: "Get (Search & Clipboard)",
         syntax: "cwm get [name] [flags]",
-        summary: "Retrieve saved variables, search global shell histories, or read from your shared copy bank.",
+        summary: "Retrieve saved variables, search global shell histories (-h), query copy bank (-c), or execute directly (-x) with placeholder resolution.",
         logic: `
-            <p>The <code>get</code> command is your primary search engine. When a name is matched, CWM automatically copies the command value to your system clipboard.</p>
-            <p><strong>Advanced Filters:</strong></p>
-            <p>You can search logged histories directly using comma-separated keywords with include (<code>-f</code>) logic without writing custom grep pipes.</p>
+            <p>The <code>get</code> command searches and executes vaulted commands:</p>
+            <ul>
+                <li><strong>Interactive Placeholders:</strong> Detects <code>%Variable%</code> headers and prompts for user inputs dynamically. Ignores commented lines (<code>#</code>, <code>//</code>, <code>--</code>) automatically.</li>
+                <li><strong>Missing Script Handling:</strong> Prompts interactive choices (delete entry or create script template) if a referenced script file is missing from disk.</li>
+            </ul>
         `,
         flags: [
             { name: "[name]", desc: "Name of the variable to retrieve and copy." },
@@ -121,19 +124,19 @@ const cwmDocs = {
             { name: "-t, --tag <name>", desc: "<strong>Tag Filter:</strong> Retrieve saved commands filtered by a specific tag." },
             { name: "-h, --hist", desc: "<strong>Search History:</strong> Opens a paginated table of logged terminal executions." },
             { name: "-c, --copy", desc: "<strong>Copy Bank:</strong> Read configurations directly from your shared copy bank database file." },
-            { name: "-f <keywords>", desc: "<strong>Include Filter:</strong> comma-separated list of words that must be present in the command." },
+            { name: "-f <keywords>", desc: "<strong>Include Filter:</strong> Comma-separated list of words that must be present in the command." },
             { name: "-n <count>", desc: "Limit search results count (default: 10)." }
         ],
         usage: [
             {
                 title: "Run saved command or script with interactive variable resolution (-x)",
                 cmd: "cwm get tree-copy -x",
-                expect: "Enter value for %Path%: .\nExecuting: powershell -ExecutionPolicy Bypass -File \"~/.cwm/scripts/tree-copy.ps1\" \".\"\nVisual tree for '.' copied to clipboard!"
+                expect: "Enter value for %Path%: .\nExecuting: powershell -ExecutionPolicy Bypass -File \"~/.cwm/scripts/tree-copy.ps1\" \".\""
             },
             {
-                title: "Search terminal history for a keyword",
-                cmd: "cwm get docker",
-                expect: "ID   COMMAND                          DATE\n12   docker compose up -d             2026-07-23 14:10\n45   docker build -t app:latest .     2026-07-23 15:30"
+                title: "Search terminal history for keywords",
+                cmd: "cwm get -h -f 'git,commit'",
+                expect: "ID   COMMAND                          DATE\n12   git commit -m 'feat: initial'    2026-07-24 14:10"
             },
             {
                 title: "Copy saved command directly to clipboard (-c)",
@@ -171,23 +174,63 @@ const cwmDocs = {
             }
         ]
     },
+    "tidy": {
+        title: "Tidy (Optimization)",
+        syntax: "cwm tidy [history|watch] [flags]",
+        summary: "Deduplicate and optimize terminal history files on disk or recorded watch logs in database with path-aware context matching.",
+        logic: `
+            <p>The <code>tidy</code> command optimizes history logs across disk and database:</p>
+            <ul>
+                <li><strong>cwm tidy history:</strong> Scans the active shell history file on disk, removing duplicate command lines and filtering bloated entries exceeding character (<code>-c</code>) or word (<code>-w</code>) thresholds.</li>
+                <li><strong>cwm tidy watch:</strong> Performs <strong>path-aware deduplication</strong> on recorded watch history in the SQLite database (<code>history_logs</code> table). Preserves duplicate command names across different working directories while deduplicating repeats within the same directory context.</li>
+                <li><strong>cwm tidy:</strong> Runs both history and watch tidying in a single command.</li>
+            </ul>
+        `,
+        flags: [
+            { name: "history", desc: "Tidy active shell history file on disk." },
+            { name: "watch", desc: "Tidy recorded watch history database logs with path-aware deduplication." },
+            { name: "-c, --max-chars <int>", desc: "Filter out command lines exceeding N characters (default: 200, 0 to disable)." },
+            { name: "-w, --max-words <int>", desc: "Filter out command lines exceeding N words (default: 50, 0 to disable)." },
+            { name: "-n, --max-lines <int>", desc: "Filter out multiline command blocks exceeding N lines (default: 10)." },
+            { name: "-y, --yes", desc: "Skip confirmation prompts." }
+        ],
+        usage: [
+            {
+                title: "Path-aware watch database history tidying (cwm tidy watch)",
+                cmd: "cwm tidy watch",
+                expect: "Watch History Analysis (SQLite Database):\n  • Total Log Entries:            4200\n  • Path-Aware Duplicates Found:  310\n  • Optimized Result:             4200 -> 3890 database entries\nSuccessfully tidied watch database logs (removed 310 path-aware duplicates)."
+            },
+            {
+                title: "Disk history file tidying (cwm tidy history)",
+                cmd: "cwm tidy history -c 200 -w 50",
+                expect: "Shell History Analysis (File Disk):\n  Target File:         C:/Users/ismail/.../ConsoleHost_history.txt\n  • Total Raw Lines:   11711\n  • Duplicate Lines:   7780\n  • Oversized (>200 ch): 113\n  • Optimized Result:  11711 -> 3818 lines"
+            },
+            {
+                title: "Full system history and watch tidying (cwm tidy -y)",
+                cmd: "cwm tidy -y",
+                expect: "Successfully tidied shell history file (11711 -> 3818 lines).\nSuccessfully tidied watch database logs (removed 310 path-aware duplicates)."
+            }
+        ]
+    },
     "clear": {
         title: "Clear & Trash Restore",
         syntax: "cwm clear [query] [flags]",
-        summary: "Interactively delete selected saved commands, wipe history logs, or restore deleted commands from trash.",
+        summary: "Interactively delete selected saved commands, wipe history logs, or manage the trash buffer.",
         logic: `
             <p>The <code>clear</code> command provides interactive selective deletion and automatic trash backups (keeping the last 100 deleted commands):</p>
             <ul>
-                <li><strong>Interactive Selection:</strong> Displays a numbered list of commands (e.g. <code>1. test, 2. serve, 3. build</code>). Enter numbers like <code>1, 3</code> to delete only those specific commands.</li>
+                <li><strong>Interactive Selection:</strong> Displays a numbered list of saved commands. Enter numbers like <code>1, 3</code> to delete specific commands. Deleting script commands automatically cleans associated script files from disk.</li>
                 <li><strong>Automatic Trash (Undo):</strong> All deleted saved commands are safely archived into the trash database (up to 100 items).</li>
-                <li><strong>Conflict Resolution:</strong> When restoring from trash, if a command name already exists in active saved commands, the active command is preserved and the restore is safely skipped.</li>
-                <li><strong>Bulk Confirmation:</strong> Bulk wipe operations require confirmation prompts unless <code>-y</code> / <code>--yes</code> is supplied.</li>
+                <li><strong>Direct Restore (-r):</strong> Pass a command variable name (<code>cwm clear -r tree-copy</code>) to restore it directly.</li>
+                <li><strong>Empty Trash (--trash):</strong> Permanently empty all archived commands in the trash buffer.</li>
             </ul>
         `,
         flags: [
             { name: "[query]", desc: "Search pattern to filter saved commands before opening selection menu." },
+            { name: "--trash", desc: "<strong>Clear Trash:</strong> Permanently empty all archived commands in the trash buffer." },
             { name: "-r, --restore [name]", desc: "<strong>Restore Trash:</strong> Pass a variable name to restore it immediately, or run <code>cwm clear -r</code> to inspect trash and pick items to restore." },
             { name: "-n, --list", desc: "<strong>List Trash:</strong> View recently deleted commands in the trash buffer (last 100 items)." },
+            { name: "-c, --config", desc: "<strong>Clear Config:</strong> Wipe all saved system configurations (preferred editor, history file, code theme) and reset to default auto-detection." },
             { name: "-s, --saved", desc: "<strong>Clear Saved Commands:</strong> Bulk clear saved commands with confirmation prompt." },
             { name: "-d, --history", desc: "<strong>Clear History Logs:</strong> Bulk clear shell history logs with confirmation prompt." },
             { name: "-a <dir>", desc: "<strong>Clear Path History:</strong> Delete logged command histories for a specific context directory." },
@@ -195,57 +238,67 @@ const cwmDocs = {
         ],
         usage: [
             {
-                title: "Interactive selective command deletion",
-                cmd: "cwm clear",
-                expect: "1. test\n2. serve\n3. build\nEnter numbers to delete (e.g. 1, 3): 1\nDeleted 1 command."
-            },
-            {
                 title: "Restore deleted command from trash (-r)",
                 cmd: "cwm clear -r tree-copy",
                 expect: "Restored command 'tree-copy' from trash."
             },
             {
-                title: "List recently deleted items in trash (-n / --list)",
-                cmd: "cwm clear --list",
-                expect: "TRASH COMMANDS (Last 100):\n1. tree-copy (Deleted: 2026-07-23 18:00)\n2. serve-cd  (Deleted: 2026-07-23 17:30)"
+                title: "Permanently empty trash buffer (--trash)",
+                cmd: "cwm clear --trash",
+                expect: "Are you sure you want to permanently empty ALL 15 item(s) in the trash buffer? (y/N): y\nSuccessfully emptied trash buffer (15 item(s) permanently deleted)."
+            },
+            {
+                title: "Interactive selective command deletion",
+                cmd: "cwm clear",
+                expect: "1. test\n2. serve\n3. build\nEnter numbers to delete (e.g. 1, 3): 1\nNotice: Deleted associated script file for 'test': C:/Users/ismail/.cwm/scripts/test.ps1\nDeleted 1 command."
             }
         ]
     },
     "watch": {
         title: "Watch (Active Tracker)",
-        syntax: "cwm watch <subcommand>",
-        summary: "Toggle the real-time background shell execution command logging.",
+        syntax: "cwm watch <subcommand> [flags]",
+        summary: "Toggle real-time background shell execution command logging with command exclusion filters.",
         logic: `
             <p>The <code>watch</code> command controls the background terminal execution logger. When active, every shell command is logged in SQLite along with its context directory path.</p>
+            <ul>
+                <li><strong>Command Exclusion (-ex):</strong> Configure a comma-separated exclusion list (e.g. <code>cwm watch start -ex cwm,python,clear</code>) to prevent specific commands from being saved in database history logs.</li>
+                <li><strong>Profile Reloading:</strong> Automatically copies system-aware reload commands (<code>. $PROFILE</code> or <code>source ~/.bashrc</code>) directly to your clipboard upon starting or stopping watch hooks.</li>
+            </ul>
         `,
         subcommands: [
-            { name: "start", desc: "Activate real-time shell logging hooks." },
+            { name: "start", desc: "Activate real-time shell logging hooks (supports <code>-ex cwm,python,clear</code> to exclude specific commands)." },
             { name: "stop", desc: "Deactivate real-time shell logging hooks." },
-            { name: "status", desc: "Displays whether active tracking is currently running." }
+            { name: "status", desc: "Displays whether active tracking is currently running and lists excluded commands." }
+        ],
+        flags: [
+            { name: "-ex, --exclude <list>", desc: "Comma-separated list of command prefixes/names to exclude from watch logging (e.g. <code>cwm watch start -ex cwm,python,clear</code>)." }
         ],
         usage: [
             {
-                title: "Activate background terminal logger",
-                cmd: "cwm watch start",
-                expect: "Real-time background command watch started."
+                title: "Activate background terminal logger with excluded commands",
+                cmd: "cwm watch start -ex cwm,python,clear",
+                expect: "Watch session started successfully!\n  Profile updated:   C:/Users/ismail/...\n  Excluded Commands: cwm,python,clear\n  Copied reload command '. $PROFILE' to clipboard!"
             },
             {
                 title: "Check background logger status",
                 cmd: "cwm watch status",
-                expect: "Background Watch Status: ACTIVE"
+                expect: "Watch status: ACTIVE\nShell Type:        pwsh\nProfile File:      C:/Users/ismail/...\nExcluded Commands: cwm,python,clear"
             }
         ]
     },
     "bank": {
-        title: "Bank (Storage & Reset)",
+        title: "Bank (Storage & Replication)",
         syntax: "cwm bank <subcommand>",
-        summary: "Inspect CWM database folders, file size metrics, or trigger a factory reset.",
+        summary: "Inspect database metrics, view file sizes, or delete global storage banks.",
         logic: `
-            <p>The <code>bank</code> command displays database metadata. It also coordinates global database purges, ensuring any linked copy bank files are also safely removed.</p>
+            <p>The <code>bank</code> command lets you monitor storage metrics and manage the local primary database or remote mirror bank.</p>
         `,
         subcommands: [
-            { name: "info", desc: "View folder locations and file sizes of global and copy banks." },
-            { name: "delete --global", desc: "<strong>Reset CWM:</strong> Completely deletes settings, saved variables, and histories on this PC and synchronized copy banks." }
+            { name: "info", desc: "Inspect database locations, storage sizes, script counts, and copy bank status." },
+            { name: "delete", desc: "Delete storage banks with confirmation prompts." }
+        ],
+        flags: [
+            { name: "--global", desc: "Target global database file for bank deletion." }
         ],
         usage: [
             {
@@ -274,11 +327,6 @@ const cwmDocs = {
                 title: "Set preferred native text editor for scripts (VS Code, Nano, Notepad)",
                 cmd: "cwm config --editor \"code --wait\"",
                 expect: "Set preferred editor: code --wait"
-            },
-            {
-                title: "Set preferred editor to Notepad on Windows",
-                cmd: "cwm config editor notepad",
-                expect: "Set preferred editor: notepad"
             },
             {
                 title: "Configure shared remote copy bank path (-c)",
