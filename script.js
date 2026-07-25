@@ -657,6 +657,19 @@ function copyFullDocContext(cmdId, btnElement) {
         text += `\n`;
     }
 
+    if (details.usage && details.usage.length > 0) {
+        text += `USAGE & TUTORIALS:\n`;
+        details.usage.forEach((u, idx) => {
+            text += `  ${idx + 1}. ${u.title}\n`;
+            text += `     Command:  $ ${u.cmd}\n`;
+            if (u.expect) {
+                let cleanExpect = u.expect.replace(/\n/g, "\n               ");
+                text += `     Result:   ${cleanExpect}\n`;
+            }
+            text += `\n`;
+        });
+    }
+
     const onSuccess = () => {
         const span = btnElement.querySelector('span');
         const oldText = span ? span.textContent : "Copy Page";
