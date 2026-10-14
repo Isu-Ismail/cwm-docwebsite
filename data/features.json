@@ -1,0 +1,32 @@
+[
+  {
+    "id": "vault",
+    "title": "Command vault",
+    "text": "Save any command or script under a short name. Tag it, describe it, run it with -x.",
+    "cmd": "cwm save gs \"git status -sb\""
+  },
+  {
+    "id": "history",
+    "title": "History that knows folders",
+    "text": "An optional shell hook records each command with the folder it ran in. Secrets are skipped.",
+    "cmd": "cwm watch start"
+  },
+  {
+    "id": "tidy",
+    "title": "Tidy duplicates",
+    "text": "Remove duplicate lines from your history file. Multi-line commands stay whole. A backup is written first.",
+    "cmd": "cwm tidy history"
+  },
+  {
+    "id": "sync",
+    "title": "Two-way sync",
+    "text": "Point two PCs at one folder. CWM merges both ways, and deletes stick.",
+    "cmd": "cwm config -c D:/shared/cwm"
+  },
+  {
+    "id": "trash",
+    "title": "Undo for deletes",
+    "text": "Deleted commands go to a trash buffer of 100. Restore one by name.",
+    "cmd": "cwm clear -r gs"
+  }
+]

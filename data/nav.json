@@ -1,0 +1,36 @@
+[
+  {
+    "id": "start",
+    "title": "Getting started",
+    "commands": [
+      "hello",
+      "setup",
+      "version"
+    ]
+  },
+  {
+    "id": "vault",
+    "title": "Command vault",
+    "commands": [
+      "save",
+      "get",
+      "clear"
+    ]
+  },
+  {
+    "id": "history",
+    "title": "History",
+    "commands": [
+      "watch",
+      "tidy"
+    ]
+  },
+  {
+    "id": "system",
+    "title": "System",
+    "commands": [
+      "config",
+      "bank"
+    ]
+  }
+]

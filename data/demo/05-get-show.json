@@ -1,0 +1,6 @@
+{
+  "order": 5,
+  "title": "get show",
+  "cmd": "cwm get hello --show",
+  "output": "echo Hello World"
+}

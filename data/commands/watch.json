@@ -1,0 +1,51 @@
+{
+  "title": "watch",
+  "syntax": "cwm watch <start|stop|status> [-ex a,b]",
+  "summary": "Install or remove a shell hook that records each command with its folder.",
+  "notes": [
+    "`watch start` adds a block to your profile. The block calls `cwm watch log` after every command. There is no background process.",
+    "Commands that look like they hold secrets (password, token, secret, api key, Authorization, bearer, private key) are never stored.",
+    "Commands that start with a space are never stored.",
+    "`-ex` takes a comma separated list of command names to skip, for example `cwm,clear`. Run `watch start -ex ...` again to update the list.",
+    "Read the log back with `cwm get -a`. Remove duplicates with `cwm tidy watch`.",
+    "`cwm watch log` is internal. The shell hook uses it."
+  ],
+  "flags": [
+    {
+      "name": "-ex, --exclude <list>",
+      "desc": "Command names to skip, comma separated."
+    }
+  ],
+  "subcommands": [
+    {
+      "name": "start",
+      "desc": "Install the hook in your shell profile."
+    },
+    {
+      "name": "stop",
+      "desc": "Remove the hook."
+    },
+    {
+      "name": "status",
+      "desc": "Show whether the hook is active and the exclusion list."
+    }
+  ],
+  "examples": [
+    {
+      "title": "Start recording, skipping cwm and clear",
+      "cmd": "cwm watch start -ex cwm,clear",
+      "output": "Watch session started successfully!\n  Profile updated:   C:\\Users\\you\\.bashrc\n  Excluded Commands: cwm,clear\n  Not recorded:      commands that look like they contain secrets, and commands that start with a space\n  Activate it now with: source ~/.bashrc"
+    },
+    {
+      "title": "Check status",
+      "cmd": "cwm watch status",
+      "output": "Watch status: ACTIVE\nShell Type:        bash\nProfile File:      C:\\Users\\you\\.bashrc\nExcluded Commands: cwm,clear"
+    },
+    {
+      "title": "Stop recording",
+      "cmd": "cwm watch stop",
+      "output": "CWM watch hook removed from profile successfully.\n  Apply it now with: source ~/.bashrc"
+    }
+  ],
+  "id": "watch"
+}

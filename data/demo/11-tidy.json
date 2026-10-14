@@ -1,0 +1,6 @@
+{
+  "order": 11,
+  "title": "tidy",
+  "cmd": "cwm tidy history -y",
+  "output": "Shell History Analysis (File Disk)\n  Target File:         C:/Users/you/.bash_history\n  • Commands:          8\n  • Duplicates:        2 (older copies are removed)\n  • Oversized Chars:   Disabled (-c 0)\n  • Oversized Words:   Disabled (-w 0)\n  • Optimized Result:  8 -> 6 commands\n\nTidied shell history file (8 -> 6 commands).\n  Backup: C:/Users/you/.bash_history.cwm-20261014-205028.bak\n  Open shells keep their own copy in memory; the change shows in new shells."
+}

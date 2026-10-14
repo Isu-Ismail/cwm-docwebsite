@@ -1,0 +1,72 @@
+{
+  "title": "clear",
+  "syntax": "cwm clear [name] [flags]",
+  "summary": "Delete saved commands, wipe history, or restore from the trash.",
+  "notes": [
+    "Deleted saved commands go to a trash buffer that keeps the newest 100.",
+    "Pick items by number: `1, 3, 5`, a range `2-4`, or `all`.",
+    "Script files are moved to `~/.cwm/scripts/.trash` and moved back by `clear -r`. Files outside the scripts folder are never touched.",
+    "When a copy bank is set, the delete is applied there too, so the next sync does not bring the command back."
+  ],
+  "flags": [
+    {
+      "name": "-r, --restore [name]",
+      "desc": "Restore from trash. Without a name, list the trash and pick."
+    },
+    {
+      "name": "-n, --list",
+      "desc": "List trashed commands."
+    },
+    {
+      "name": "--trash",
+      "desc": "Empty the trash for good."
+    },
+    {
+      "name": "-t, --tag <tag>",
+      "desc": "Clear commands with exactly this tag."
+    },
+    {
+      "name": "-f, --fuzzy",
+      "desc": "Fuzzy match the query."
+    },
+    {
+      "name": "-s, --saved",
+      "desc": "Clear all saved commands."
+    },
+    {
+      "name": "-d, --history",
+      "desc": "Clear all history logs in the database."
+    },
+    {
+      "name": "-a, --active <path>",
+      "desc": "Clear history recorded for one folder."
+    },
+    {
+      "name": "-c, --config",
+      "desc": "Reset stored settings."
+    },
+    {
+      "name": "-y, --yes",
+      "desc": "Skip confirmation prompts."
+    }
+  ],
+  "subcommands": [],
+  "examples": [
+    {
+      "title": "Delete one command",
+      "cmd": "cwm clear gs",
+      "output": "Saved Commands\nID     Variable         Command                              Tags             Description\n-----------------------------------------------------------------------------------------------\n1      gs               git status -sb                       git\n\nEnter number(s) to delete (e.g. 1, 3, 5), 'all' to delete all, or Enter to cancel: 1\nSuccessfully deleted 1 command(s) and moved to trash: gs"
+    },
+    {
+      "title": "Look at the trash",
+      "cmd": "cwm clear -n",
+      "output": "Trashed Commands (Last 100)\nID     Variable         Command                              Tags             Description\n-----------------------------------------------------------------------------------------------\n1      gs               git status -sb                       git"
+    },
+    {
+      "title": "Bring it back",
+      "cmd": "cwm clear -r gs",
+      "output": "Restored command: gs"
+    }
+  ],
+  "id": "clear"
+}

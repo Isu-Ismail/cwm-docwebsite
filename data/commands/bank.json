@@ -1,0 +1,38 @@
+{
+  "title": "bank",
+  "syntax": "cwm bank <info|delete>",
+  "summary": "See where CWM keeps its data, or delete it.",
+  "notes": [
+    "`bank info` shows the database path, the copy bank path and the file size.",
+    "`bank delete` lists what it will remove, including the number of script files. You must type `delete` to confirm.",
+    "Nothing is deleted without that confirmation."
+  ],
+  "flags": [
+    {
+      "name": "--global",
+      "desc": "Delete the global database (`bank delete`)."
+    },
+    {
+      "name": "--copy-bank",
+      "desc": "Also delete the shared copy bank database file."
+    }
+  ],
+  "subcommands": [
+    {
+      "name": "info",
+      "desc": "Show database paths and size."
+    },
+    {
+      "name": "delete",
+      "desc": "Delete database instances (danger)."
+    }
+  ],
+  "examples": [
+    {
+      "title": "Where is my data?",
+      "cmd": "cwm bank info",
+      "output": "  Global Database Path:  C:\\Users\\you\\.cwm\\cwm.db\n  Copy Bank Path:        Not Configured\n  Database File Size:    40.00 KB"
+    }
+  ],
+  "id": "bank"
+}

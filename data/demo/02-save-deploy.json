@@ -1,0 +1,6 @@
+{
+  "order": 2,
+  "title": "save deploy",
+  "cmd": "cwm save deploy \"kubectl rollout restart deploy/%name% -n %ns%\" -t k8s",
+  "output": "Saved [k8s] deploy = kubectl rollout restart deploy/%name%..."
+}

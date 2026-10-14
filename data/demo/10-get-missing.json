@@ -1,0 +1,6 @@
+{
+  "order": 10,
+  "title": "get missing",
+  "cmd": "cwm get nope --show",
+  "output": "Error: Command 'nope' not found."
+}
