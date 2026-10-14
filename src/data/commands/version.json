@@ -1,0 +1,23 @@
+{
+  "title": "version",
+  "syntax": "cwm version",
+  "summary": "Print the installed CWM version.",
+  "notes": [
+    "`cwm -v` and `cwm --version` print the same line. This command does not open the database."
+  ],
+  "flags": [
+    {
+      "name": "-v, --version",
+      "desc": "Print the version and exit."
+    }
+  ],
+  "subcommands": [],
+  "examples": [
+    {
+      "title": "Check the version",
+      "cmd": "cwm version",
+      "output": "cwm v2.0.0"
+    }
+  ],
+  "id": "version"
+}

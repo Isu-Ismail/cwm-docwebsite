@@ -1,0 +1,6 @@
+{
+  "order": 6,
+  "title": "get run",
+  "cmd": "cwm get hello -x",
+  "output": "Description: Greets user\nExecuting command: echo Hello World\nHello World"
+}

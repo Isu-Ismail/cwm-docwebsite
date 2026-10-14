@@ -1,0 +1,6 @@
+{
+  "order": 7,
+  "title": "get tag",
+  "cmd": "cwm get -t git -l",
+  "output": "Saved Commands\nID     Variable         Command                              Tags             Description         \n-----------------------------------------------------------------------------------------------\n1      gs               git status -sb                       git                                  "
+}

@@ -1,0 +1,114 @@
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/fonts/JetBrainsMono-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-weight: 700;
+  font-display: swap;
+  src: url('./assets/fonts/JetBrainsMono-Bold.ttf') format('truetype');
+}
+
+/* Colour tokens. One accent, hairlines, no shadows. The terminal stays dark in both themes. */
+:root {
+  --bg: #fcfcfb;
+  --panel: #f4f4f1;
+  --fg: #1c1c1a;
+  --muted: #6b6b66;
+  --line: #e4e4de;
+  --face: #d9d9d2;
+  --accent: #b45309;
+  --accent-soft: #fbeedd;
+  --term-bg: #121211;
+  --term-fg: #e6e6e1;
+  --term-dim: #7d7d76;
+  --term-ok: #4ade80;
+  --term-err: #f87171;
+  --term-key: #8ab4f8;
+  --term-prompt: #f5a524;
+  color-scheme: light;
+}
+:root[data-theme='dark'] {
+  --bg: #0e0e0d;
+  --panel: #161615;
+  --fg: #ececE8;
+  --muted: #8d8d86;
+  --line: #262624;
+  --face: #34342f;
+  --accent: #f5a524;
+  --accent-soft: #2a1d0a;
+  --term-bg: #080807;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+html {
+  scroll-padding-top: 5rem;
+}
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.15s ease;
+}
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Inline code inside prose */
+.prose-cwm code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+}
+
+/* Terminal output tokens */
+.t-accent { color: var(--term-prompt); }
+.t-dim { color: var(--term-dim); }
+.t-prompt { color: var(--term-prompt); }
+.t-ok { color: var(--term-ok); }
+.t-err { color: var(--term-err); }
+.t-head { color: var(--term-fg); font-weight: 700; }
+.t-key { color: var(--term-key); }
+.t-cursor {
+  display: inline-block;
+  width: 0.6ch;
+  height: 1.1em;
+  vertical-align: text-bottom;
+  background: var(--term-fg);
+  animation: blink 1.1s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .t-cursor { animation: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* Still scrollable, just no visible bar (long install commands). */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
