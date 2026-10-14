@@ -1,0 +1,6 @@
+{
+  "order": 9,
+  "title": "guard",
+  "cmd": "cwm save hello \"echo again\"",
+  "output": "Error: Variable 'hello' already exists. (Use -e to edit)"
+}

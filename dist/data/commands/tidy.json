@@ -1,0 +1,49 @@
+{
+  "title": "tidy",
+  "syntax": "cwm tidy [history|watch] [flags]",
+  "summary": "Remove duplicate commands from your history file and from the watch log.",
+  "notes": [
+    "`tidy history` keeps the newest copy of each command. Multi-line commands count as one entry.",
+    "The history file is backed up as `<file>.cwm-<time>.bak` before it is rewritten.",
+    "Long commands are only removed when you ask: `-c` for characters, `-w` for words. The default is keep all.",
+    "`tidy watch` removes duplicates in the database. A command run in two folders is kept in both. The same command run twice in one folder is reduced to one.",
+    "`cwm tidy` with no subcommand runs both."
+  ],
+  "flags": [
+    {
+      "name": "-c, --max-chars <n>",
+      "desc": "Remove commands longer than n characters. 0 keeps all."
+    },
+    {
+      "name": "-w, --max-words <n>",
+      "desc": "Remove commands longer than n words. 0 keeps all."
+    },
+    {
+      "name": "-y, --yes",
+      "desc": "Skip the confirmation prompt."
+    }
+  ],
+  "subcommands": [
+    {
+      "name": "history",
+      "desc": "Tidy the shell history file on disk."
+    },
+    {
+      "name": "watch",
+      "desc": "Tidy the watch log in the database."
+    }
+  ],
+  "examples": [
+    {
+      "title": "Tidy the history file",
+      "cmd": "cwm tidy history -y",
+      "output": "Shell History Analysis (File Disk)\n  Target File:         C:/Users/you/.bash_history\n  • Commands:          8\n  • Duplicates:        2 (older copies are removed)\n  • Oversized Chars:   Disabled (-c 0)\n  • Oversized Words:   Disabled (-w 0)\n  • Optimized Result:  8 -> 6 commands\n\nTidied shell history file (8 -> 6 commands).\n  Backup: C:/Users/you/.bash_history.cwm-20261014-205028.bak\n  Open shells keep their own copy in memory; the change shows in new shells."
+    },
+    {
+      "title": "Tidy the watch log",
+      "cmd": "cwm tidy watch -y",
+      "output": "Watch History Analysis (SQLite Database)\n  • Total Log Entries:            3\n  • Path-Aware Duplicates Found:  0 (older copies are removed)\n  • Optimized Result:             3 -> 3 database entries\n\nWatch history database is already clean (0 path-aware duplicates found)."
+    }
+  ],
+  "id": "tidy"
+}

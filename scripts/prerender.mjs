@@ -1,7 +1,7 @@
 // Turns the client build into static HTML for every route, so crawlers and no-JS visitors
 // get real content and per-page <title>/<meta>. Also writes sitemap.xml, robots.txt and 404.html.
 // Runs after `vite build` (client) and `vite build --ssr` (server bundle in dist-ssr).
-import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
+import { cp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
@@ -48,6 +48,10 @@ await writeFile(
 )
 await writeFile(join(dist, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`)
 await writeFile(join(dist, '.nojekyll'), '')
+
+// The content JSON files are bundled into the JS, and also published as plain files
+// (dist/data/commands/save.json ...) so other tools and the CLI can read them.
+await cp(join(root, 'src', 'data'), join(dist, 'data'), { recursive: true })
 
 await rm(ssrDir, { recursive: true, force: true })
 console.log(`prerendered ${paths.length} pages + 404.html, sitemap.xml, robots.txt`)

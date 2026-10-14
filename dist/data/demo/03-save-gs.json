@@ -1,0 +1,6 @@
+{
+  "order": 3,
+  "title": "save gs",
+  "cmd": "cwm save gs \"git status -sb\" -t git",
+  "output": "Saved [git] gs = git status -sb"
+}

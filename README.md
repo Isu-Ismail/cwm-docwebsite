@@ -13,11 +13,22 @@ pnpm preview    # serve dist/ locally
 pnpm check      # svelte-check + tsc
 ```
 
-Deploying under a sub-path (GitHub Pages project site):
+## Deploying (build locally, publish `dist/`)
 
-```
-BASE=/cwm-docwebsite/ pnpm build
-```
+Production is `https://cwm.codism.in`, served from the root by GitHub Pages.
+
+1. `pnpm build` on your PC. `dist/` is committed to git (it is not ignored).
+2. Commit and push to `main` with the word `build` in the message, for example `git commit -m "build: docs update"`.
+3. `.github/workflows/deploy.yml` does not build. It checks `dist/index.html` is a real build, then
+   force-pushes the contents of `dist/` to the `deploy` branch.
+4. One time: repo Settings > Pages > Source = "Deploy from a branch", branch `deploy`, folder `/ (root)`.
+
+If the browser reports `/src/main.ts` blocked with MIME type `video/mp2t`, Pages is serving the source
+instead of `dist/`. Check the Pages source branch.
+
+`dist/` contains: `index.html` per route, `assets/` (JS, CSS, fonts), `data/` (every content JSON as a
+plain file), `favicon.svg`, `sitemap.xml`, `robots.txt`, `404.html`, `CNAME`, `.nojekyll`.
+For a sub-path host, build with `BASE=/sub/ pnpm build`.
 
 `VITE_SITE_URL` overrides the public origin used for canonical links and the sitemap (default is
 `siteUrl` in `src/data/site.json`).

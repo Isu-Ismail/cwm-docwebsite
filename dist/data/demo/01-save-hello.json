@@ -1,0 +1,6 @@
+{
+  "order": 1,
+  "title": "save hello",
+  "cmd": "cwm save hello \"echo Hello World\" -t util -d \"Greets user\"",
+  "output": "Saved [util] hello = echo Hello World (Greets user)"
+}

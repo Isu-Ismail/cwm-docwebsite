@@ -1,0 +1,85 @@
+{
+  "title": "get",
+  "syntax": "cwm get [name|id] [flags]",
+  "summary": "Find a saved command, copy it, show it, or run it. Also searches shell history.",
+  "notes": [
+    "With a name, `get` copies the command to the clipboard. With no name it lists commands and asks you to pick one.",
+    "`-x` runs the command. With the shell wrapper from `cwm setup` it runs in your current shell, and the exit code of the command is passed through.",
+    "`--show` prints only the command on stdout. Tables, prompts and errors go to stderr, so it is safe to pipe.",
+    "Placeholders written as `%name%` or `{{name}}` are filled in by prompts. Comment lines are ignored.",
+    "`-f` turns on fuzzy matching: the letters you type must appear in order, not next to each other.",
+    "History search (`-h`) reads your shell history file. `-a` reads what `cwm watch` recorded for the current folder."
+  ],
+  "flags": [
+    {
+      "name": "-x, --exec",
+      "desc": "Run the command instead of copying it."
+    },
+    {
+      "name": "--show",
+      "desc": "Print the command without copying it."
+    },
+    {
+      "name": "-l, --list",
+      "desc": "List commands without asking for a choice."
+    },
+    {
+      "name": "-t, --tag <tag>",
+      "desc": "Only commands with this tag."
+    },
+    {
+      "name": "-f, --fuzzy",
+      "desc": "Fuzzy search saved commands or history."
+    },
+    {
+      "name": "-h, --hist",
+      "desc": "Search shell history."
+    },
+    {
+      "name": "-a, --active",
+      "desc": "Search commands recorded in the current project folder."
+    },
+    {
+      "name": "-c, --copy",
+      "desc": "Read from the copy bank database."
+    },
+    {
+      "name": "-n, --count <n>",
+      "desc": "Limit the number of results. History default is 10."
+    }
+  ],
+  "subcommands": [],
+  "examples": [
+    {
+      "title": "List everything",
+      "cmd": "cwm get -l",
+      "output": "Saved Commands\nID     Variable         Command                              Tags             Description\n-----------------------------------------------------------------------------------------------\n1      hello            echo Hello World                     util             Greets user\n2      deploy           kubectl rollout restart deploy/%...  k8s              Restart a deployment\n3      gs               git status -sb                       git"
+    },
+    {
+      "title": "Show a command without copying",
+      "cmd": "cwm get hello --show",
+      "output": "echo Hello World"
+    },
+    {
+      "title": "Run a command",
+      "cmd": "cwm get hello -x",
+      "output": "Description: Greets user\nExecuting command: echo Hello World\nHello World"
+    },
+    {
+      "title": "Unknown name",
+      "cmd": "cwm get nope --show",
+      "output": "Error: Command 'nope' not found."
+    },
+    {
+      "title": "Browse shell history",
+      "cmd": "cwm get -h",
+      "output": "System Shell History (6/6)\nID     Command\n----------------------------------------------------------------------\n1      npm install\n2      git commit -m \"feat: setup GoReleaser\"\n3      ls\n4      git commit -m \"fix: database schema\"\n5      docker compose up -d\n6      git status\n\nCopy (ID):"
+    },
+    {
+      "title": "Commands recorded in this folder",
+      "cmd": "cwm get -a -l",
+      "output": "Local Project History (3/3)\nID     Command\n----------------------------------------------------------------------\n1      git status\n2      git commit -m feat\n3      npm run build"
+    }
+  ],
+  "id": "get"
+}

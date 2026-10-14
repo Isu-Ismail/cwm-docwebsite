@@ -1,4 +1,8 @@
-name: Deploy to GitHub Pages
+name: Publish dist to the deploy branch
+
+# The site is built on your own PC (pnpm build) and the dist/ folder is committed.
+# This workflow does not build anything. It copies dist/ into the `deploy` branch.
+# In the repo settings, Pages > Source must be "Deploy from a branch" > `deploy` / (root).
 
 on:
   push:
@@ -6,39 +10,34 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
-  group: pages
+  group: deploy-branch
   cancel-in-progress: false
 
 jobs:
-  deploy:
-    # Same rule as the old site: only deploy when the commit message contains the word "build".
+  publish:
+    # Same rule as before: only publish when the commit message contains the word "build".
     if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'build')
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 11
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      # BASE must match the repository name because this is a project site.
-      - run: pnpm build
-        env:
-          BASE: /cwm-docwebsite/
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-      - id: deployment
-        uses: actions/deploy-pages@v4
+
+      - name: Check that dist/ was built
+        run: |
+          test -f dist/index.html || { echo "dist/index.html is missing. Run 'pnpm build' and commit dist/."; exit 1; }
+          if grep -q 'src/main.ts' dist/index.html; then echo "dist/index.html is the dev page, not a build."; exit 1; fi
+
+      - name: Copy dist/ into the deploy branch
+        run: |
+          out="$(mktemp -d)"
+          cp -a dist/. "$out"/
+          cd "$out"
+          git init -q -b deploy
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "deploy: ${GITHUB_SHA}"
+          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          git push --force origin deploy

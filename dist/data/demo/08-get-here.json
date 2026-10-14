@@ -1,0 +1,6 @@
+{
+  "order": 8,
+  "title": "get here",
+  "cmd": "cwm get -a -l",
+  "output": "Local Project History (3/3)\nID     Command\n----------------------------------------------------------------------\n1      git status\n2      git commit -m feat\n3      npm run build"
+}

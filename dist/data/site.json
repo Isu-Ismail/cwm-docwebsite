@@ -1,0 +1,10 @@
+{
+  "name": "cwm",
+  "fullName": "Command Watch Manager",
+  "version": "v2.0.0",
+  "tagline": "A command vault and history keeper for your terminal.",
+  "description": "CWM is a single-binary Go CLI that saves your shell commands under short names, records history per folder and syncs across PCs. No runtime, no daemon.",
+  "repo": "https://github.com/Isu-Ismail/cwm-cli-go",
+  "releases": "https://github.com/Isu-Ismail/cwm-cli-go/releases",
+  "siteUrl": "https://cwm.codism.in"
+}

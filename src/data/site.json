@@ -6,5 +6,5 @@
   "description": "CWM is a single-binary Go CLI that saves your shell commands under short names, records history per folder and syncs across PCs. No runtime, no daemon.",
   "repo": "https://github.com/Isu-Ismail/cwm-cli-go",
   "releases": "https://github.com/Isu-Ismail/cwm-cli-go/releases",
-  "siteUrl": "https://isu-ismail.github.io/cwm-docwebsite"
+  "siteUrl": "https://cwm.codism.in"
 }

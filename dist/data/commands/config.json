@@ -1,0 +1,57 @@
+{
+  "title": "config",
+  "syntax": "cwm config [key value] [flags]",
+  "summary": "Show or change settings: editor, copy bank folder, history file.",
+  "notes": [
+    "With no arguments it prints the current settings.",
+    "The copy bank is a **folder**. CWM keeps a second `cwm.db` inside it and merges both ways. If you pass a `.db` file path, CWM uses its folder.",
+    "Do not point two PCs at a folder that a sync service (OneDrive, Dropbox) copies while CWM writes. SQLite files can be damaged by that.",
+    "Unknown keys are an error. They are not stored silently."
+  ],
+  "flags": [
+    {
+      "name": "--editor <app>",
+      "desc": "Editor for `save -s`. For example `nano`, `notepad`, `\"code --wait\"`. Use `--editor clear` to reset."
+    },
+    {
+      "name": "-c, --copy-bank <folder>",
+      "desc": "Shared folder for two-way sync."
+    },
+    {
+      "name": "--change-history-file <path>",
+      "desc": "Use this file as your shell history. The name must contain `history`."
+    },
+    {
+      "name": "--change-history-dir <path>",
+      "desc": "Alias of `--change-history-file`."
+    },
+    {
+      "name": "--clear",
+      "desc": "Reset all settings to auto-detect."
+    }
+  ],
+  "subcommands": [],
+  "examples": [
+    {
+      "title": "Show settings",
+      "cmd": "cwm config",
+      "output": "Configuration Source\n  Path: C:\\Users\\you\\.cwm\\cwm.db\n\nGeneral Settings\n  History File:     Auto-Detect\n  Preferred Editor: Auto-Detect (OS default)\n  Copy Bank Path:   Not Configured"
+    },
+    {
+      "title": "Set the editor",
+      "cmd": "cwm config --editor \"code --wait\"",
+      "output": "Set preferred editor: code --wait"
+    },
+    {
+      "title": "Set a copy bank folder",
+      "cmd": "cwm config -c D:/shared/cwm",
+      "output": "Set copy bank path: D:/shared/cwm"
+    },
+    {
+      "title": "Unknown key",
+      "cmd": "cwm config nokey x",
+      "output": "Unknown setting 'nokey'. Use: cwm config editor <name>, or the flags --editor, -c/--copy-bank, --change-history-file, --clear."
+    }
+  ],
+  "id": "config"
+}

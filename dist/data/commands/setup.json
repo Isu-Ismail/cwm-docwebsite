@@ -1,0 +1,26 @@
+{
+  "title": "setup",
+  "syntax": "cwm setup [--force]",
+  "summary": "Install the small shell function that lets `cwm get <name> -x` run in your current shell.",
+  "notes": [
+    "CWM adds one managed block to your profile (Bash, Zsh or PowerShell). Only that block is added or replaced.",
+    "A backup of your profile is saved once as `<profile>.cwm.bak` before the first change.",
+    "The function runs inside your shell, so `cd` and environment changes from a saved command stay after it finishes.",
+    "History options of your shell are not changed."
+  ],
+  "flags": [
+    {
+      "name": "--force",
+      "desc": "Pick the shell from a menu when auto-detection is wrong."
+    }
+  ],
+  "subcommands": [],
+  "examples": [
+    {
+      "title": "Detect the shell and install the block",
+      "cmd": "cwm setup",
+      "output": "Detected bash.\nAdded the CWM block to C:\\Users\\you\\.bashrc\n  Backup of the original profile: C:\\Users\\you\\.bashrc.cwm.bak\nActivate it now with: source ~/.bashrc"
+    }
+  ],
+  "id": "setup"
+}

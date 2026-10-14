@@ -1,0 +1,6 @@
+{
+  "order": 4,
+  "title": "get list",
+  "cmd": "cwm get -l",
+  "output": "Saved Commands\nID     Variable         Command                              Tags             Description\n-----------------------------------------------------------------------------------------------\n1      hello            echo Hello World                     util             Greets user\n2      deploy           kubectl rollout restart deploy/%...  k8s              Restart a deployment\n3      gs               git status -sb                       git"
+}

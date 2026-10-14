@@ -1,0 +1,57 @@
+{
+  "title": "save",
+  "syntax": "cwm save [name] [command] [flags]",
+  "summary": "Store a command, a piece of history or a multi-line script under a short name.",
+  "notes": [
+    "Saving to a name that exists is an error. Use `-e` to replace it or `-r` to rename it.",
+    "Names may contain letters, digits, `.`, `_` and `-`, up to 64 characters. Names with `/` or spaces are refused.",
+    "Your quotes and JSON are stored exactly as typed. Wrap the command in quotes so your shell passes it as one value.",
+    "Use `%name%` inside a command to make a placeholder. `cwm get` asks for a value when it runs.",
+    "Script mode (`-s`) opens your editor and keeps the file in `~/.cwm/scripts/`. Set the editor with `cwm config --editor`."
+  ],
+  "flags": [
+    {
+      "name": "-d, --desc <text>",
+      "desc": "Attach a description."
+    },
+    {
+      "name": "-t, --tag <tags>",
+      "desc": "Attach tags. One value, comma separated, for example `-t git,util`."
+    },
+    {
+      "name": "-e, --edit",
+      "desc": "Replace an existing command, or edit an existing script."
+    },
+    {
+      "name": "-r, --rename",
+      "desc": "Rename an alias. Usage: `cwm save -r old new`."
+    },
+    {
+      "name": "-l, --last",
+      "desc": "Save the last command from your shell history."
+    },
+    {
+      "name": "-s, --script",
+      "desc": "Write a multi-line script in your editor. The file lives in `~/.cwm/scripts/`."
+    }
+  ],
+  "subcommands": [],
+  "examples": [
+    {
+      "title": "Save a command with a tag and description",
+      "cmd": "cwm save hello \"echo Hello World\" -t util -d \"Greets user\"",
+      "output": "Saved [util] hello = echo Hello World (Greets user)"
+    },
+    {
+      "title": "Save a command with placeholders",
+      "cmd": "cwm save deploy \"kubectl rollout restart deploy/%name% -n %ns%\" -t k8s -d \"Restart a deployment\"",
+      "output": "Saved [k8s] deploy = kubectl rollout restart deploy/%name%... (Restart a deployment)"
+    },
+    {
+      "title": "Refuse to overwrite",
+      "cmd": "cwm save hello \"echo again\"",
+      "output": "Error: Variable 'hello' already exists. (Use -e to edit)"
+    }
+  ],
+  "id": "save"
+}
